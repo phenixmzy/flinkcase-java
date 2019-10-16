@@ -1,6 +1,6 @@
 package org.flink.example.usercase.model;
 
-public class GamePlay {
+public class GamePlayEvent {
     private String gameId;
     private String userId;
     private int startTime;
