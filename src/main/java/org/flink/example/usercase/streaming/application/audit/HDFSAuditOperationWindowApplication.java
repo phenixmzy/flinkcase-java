@@ -26,8 +26,8 @@ public class HDFSAuditOperationWindowApplication {
             return event;
         }).assignTimestampsAndWatermarks(new HDFSAuditEventAssignerWithPeriodicWatermarks(parameterTool.getLong("window.max.outoforderness")))
         .keyBy(0).map(item -> Tuple2.of(item.getCmd(), 1))
-        .timeWindowAll(Time.of(parameterTool.getLong("window.size"),SECONDS),
-                Time.of(parameterTool.getLong("window.size"), SECONDS))
+        .timeWindowAll(Time.of(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_SIZE),SECONDS),
+                Time.of(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_SLIDE),SECONDS))
                 .sum(0)
                 .addSink(new FlinkKafkaProducer011(parameterTool.getRequired("kafka.brokers"),
                         parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),
