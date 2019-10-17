@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ExecutionEnvUtil {
+    /*
     private final static long ONE_SECONDS = 1000;
     private final static long ONE_MIN = ONE_SECONDS * 60;
 
@@ -36,9 +37,10 @@ public class ExecutionEnvUtil {
         env.getConfig().setGlobalJobParameters(params);
         return env;
     }
+    */
 
     public static ParameterTool createParameterTool(final String[] args) throws Exception {
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
+//        ParameterTool parameterTool = ParameterTool.fromArgs(args);
         return ParameterTool
                 .fromPropertiesFile(ExecutionEnvUtil.class.getResourceAsStream(PropertiesConstants.PROPERTIES_FILE_NAME_KEY))
                 .mergeWith(ParameterTool.fromArgs(args))

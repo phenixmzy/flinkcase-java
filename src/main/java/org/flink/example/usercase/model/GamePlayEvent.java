@@ -1,5 +1,7 @@
 package org.flink.example.usercase.model;
 
+import java.util.Objects;
+
 public class GamePlayEvent {
     private String gameId;
     private String userId;
@@ -82,4 +84,27 @@ public class GamePlayEvent {
     public void setSite(String site) {
         this.site = site;
     }
+
+  /*  @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GamePlayEvent that = (GamePlayEvent) o;
+        return Objects.equals(gameId, that.gameId) &&
+                Objects.equals(userId, that.userId) &&
+                Objects.equals(gameType, that.gameType);
+    }
+
+    @Override
+    public int hashCode() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(gameId).append(userId).append(gameType);
+        char[] charArr = builder.toString().toCharArray();
+        int hash = 0;
+        for(char c : charArr) {
+            hash = hash * 131 + c;
+        }
+        return hash;
+    }*/
+
 }

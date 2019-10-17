@@ -27,8 +27,10 @@ public class GamePlayStreamingApplication {
                     String gameId = gamePlay.getGameId();
                     return gameId;
                 })
-                .addSink(new FlinkKafkaProducer011(parameterTool.getRequired("kafka.brokers"), parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),  new SimpleStringSchema()));
-        env.execute("GamePlay of Kafka Streaming Application");
+                .addSink(new FlinkKafkaProducer011(parameterTool.getRequired("kafka.brokers"),
+                        parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),
+                        new SimpleStringSchema()));
+        env.execute("Streaming GamePlay Kafka to Kafka");
 
     }
 }

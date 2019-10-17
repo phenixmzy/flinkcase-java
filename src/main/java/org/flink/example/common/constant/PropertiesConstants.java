@@ -39,6 +39,10 @@ public class PropertiesConstants {
 
     public static final String PROPERTIES_FILE_NAME_KEY = "/application.properties";
 
+    public static final String FLINK_WINDOW_SIZE = "flink.window.size";
+    public static final String FLINK_WINDOW_SLIDE ="flink.window.slide";
+    public static final String FLINK_WINDOW_MAX_OUTOFORDERNESS= "flink.window.max.outoforderness";
+
     // es config
     public static final String ELASTICSEARCH_BULK_FLUSH_MAX_ACTIONS = "elasticsearch.bulk.flush.max.actions";
     public static final String ELASTICSEARCH_HOSTS = "elasticsearch.hosts";
