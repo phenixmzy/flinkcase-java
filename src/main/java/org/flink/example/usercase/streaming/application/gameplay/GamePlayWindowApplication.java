@@ -1,5 +1,6 @@
 package org.flink.example.usercase.streaming.application.gameplay;
 
+import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
@@ -24,10 +25,18 @@ public class GamePlayWindowApplication {
         ParameterTool parameterTool = ExecutionEnvUtil.createParameterTool(args);
         StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);
         DataStreamSource<String> source = KafkaConfigUtil.buildSource(env);
-        source.map(gamePlayJson -> {
+        source.map(new MapFunction<String, Tuple3<String,Integer, Integer>>() {
+                       @Override
+                       public Tuple3<String, Integer, Integer> map(String gamePlayJson) throws Exception {
+                           GamePlayEvent gamePlayEvent = GsonUtil.fromJson(gamePlayJson, GamePlayEvent.class);
+                           return Tuple3.of(gamePlayEvent.getGameId(), gamePlayEvent.getLeaveTime(), 1);
+                       }
+                   }
+
+                /*gamePlayJson -> {
                 GamePlayEvent gamePlayEvent = GsonUtil.fromJson(gamePlayJson, GamePlayEvent.class);
-            return Tuple3.of(gamePlayEvent.getGameId(), gamePlayEvent.getLeaveTime(), 1);
-        }).assignTimestampsAndWatermarks(new T3AssignerWithPeriodicWatermarks(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_MAX_OUTOFORDERNESS)))
+            return Tuple3.of(gamePlayEvent.getGameId(), gamePlayEvent.getLeaveTime(), 1);*/
+        ).assignTimestampsAndWatermarks(new T3AssignerWithPeriodicWatermarks(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_MAX_OUTOFORDERNESS)))
                 .keyBy(0)
                 .timeWindow(Time.of(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_SIZE),SECONDS))
         .sum(2)
