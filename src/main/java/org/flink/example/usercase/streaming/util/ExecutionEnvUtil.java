@@ -7,6 +7,7 @@ import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.flink.example.common.constant.PropertiesConstants;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,10 +40,24 @@ public class ExecutionEnvUtil {
     }
     */
 
+    public static final ParameterTool PARAMETER_TOOL = createParameterTool();
+
+    private static ParameterTool createParameterTool() {
+        try {
+            return ParameterTool
+                    .fromPropertiesFile(ExecutionEnvUtil.class.getResourceAsStream(PropertiesConstants.PROPERTIES_FILE_NAME))
+                    .mergeWith(ParameterTool.fromSystemProperties())
+                    .mergeWith(ParameterTool.fromMap(getenv()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static ParameterTool createParameterTool(final String[] args) throws Exception {
 //        ParameterTool parameterTool = ParameterTool.fromArgs(args);
         return ParameterTool
-                .fromPropertiesFile(ExecutionEnvUtil.class.getResourceAsStream(PropertiesConstants.PROPERTIES_FILE_NAME_KEY))
+                .fromPropertiesFile(ExecutionEnvUtil.class.getResourceAsStream(PropertiesConstants.PROPERTIES_FILE_NAME))
                 .mergeWith(ParameterTool.fromArgs(args))
                 .mergeWith(ParameterTool.fromSystemProperties())
                 .mergeWith(ParameterTool.fromMap(getenv()));

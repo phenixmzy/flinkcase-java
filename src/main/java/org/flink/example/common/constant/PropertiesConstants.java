@@ -37,7 +37,7 @@ public class PropertiesConstants {
     public static final String FLINK_STREAM_CHECKPOINT_ENABLE_KEY = "flink.stream.checkpoint.enable";
     public static final String FLINK_STREAM_CHECKPOINT_INTERVAL_KEY = "flink.stream.checkpoint.interval";
 
-    public static final String PROPERTIES_FILE_NAME_KEY = "/application.properties";
+    public static final String PROPERTIES_FILE_NAME = "/application.properties";
 
     public static final String FLINK_WINDOW_SIZE = "flink.window.size";
     public static final String FLINK_WINDOW_SLIDE ="flink.window.slide";
