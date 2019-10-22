@@ -27,7 +27,7 @@ public class LogEventsParseUtil {
         int len6 = 4;
         int index7 = log.indexOf("perm=");
 
-        long timeStampMS = getTimeStampMS(matchTime(log), "yyyy-MM-dd HH:mm:ss,SSS");
+        long timeStampMS = DateTimeUtil.getTimeStampMS(matchTime(log), "yyyy-MM-dd HH:mm:ss,SSS");
         String allowed = log.substring(index1 + len1, index2).trim();
         String ugi = log.substring(index2 + len2, index3).trim();
         String ip = log.substring(index3 + len3, index4).trim();
@@ -54,8 +54,5 @@ public class LogEventsParseUtil {
         return matcher.group();
     }
 
-    private static long getTimeStampMS(String timeStr, String dateStrFormat) throws ParseException{
-        SimpleDateFormat df = new SimpleDateFormat(dateStrFormat);
-        return df.parse(timeStr).getTime();
-    }
+
 }
