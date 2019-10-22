@@ -1,4 +1,4 @@
-package org.flink.example.usercase.streaming.assigner;
+package org.flink.example.usercase.streaming.assigner.window;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

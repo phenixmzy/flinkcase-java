@@ -11,6 +11,12 @@ public class GsonUtil {
         return gson.fromJson(value, type);
     }
 
+/**
+ *  public static <T> T fromJson(byte[] value, Class<T> type) {
+        return gson.;
+    }
+ */
+
     public static String toJson(Object value) {
         return gson.toJson(value);
     }

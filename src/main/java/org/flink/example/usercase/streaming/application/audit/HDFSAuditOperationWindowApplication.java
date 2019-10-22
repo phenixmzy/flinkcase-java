@@ -2,10 +2,8 @@ package org.flink.example.usercase.streaming.application.audit;
 
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.utils.ParameterTool;
-import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
@@ -13,7 +11,6 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011;
 import org.flink.example.common.constant.PropertiesConstants;
 import org.flink.example.usercase.model.HDFSAuditEvent;
-import org.flink.example.usercase.streaming.assigner.HDFSAuditEventAssignerWithPeriodicWatermarks;
 import org.flink.example.usercase.streaming.util.ExecutionEnvUtil;
 import org.flink.example.usercase.streaming.util.GsonUtil;
 import org.flink.example.usercase.streaming.util.KafkaConfigUtil;

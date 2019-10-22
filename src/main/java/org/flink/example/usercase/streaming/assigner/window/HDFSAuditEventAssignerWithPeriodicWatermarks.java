@@ -1,4 +1,4 @@
-package org.flink.example.usercase.streaming.assigner;
+package org.flink.example.usercase.streaming.assigner.window;
 
 import org.apache.flink.streaming.api.functions.AssignerWithPeriodicWatermarks;
 import org.apache.flink.streaming.api.watermark.Watermark;
