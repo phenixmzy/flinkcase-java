@@ -12,6 +12,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.JoinedStreams;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011;
@@ -23,28 +24,6 @@ import org.flink.example.usercase.streaming.source.GamePlayEventSource;
 import org.flink.example.usercase.streaming.util.ExecutionEnvUtil;
 
 public class GamePlayJoinWindowApplication {
-
-    public static void main(String[] args) throws Exception {
-        ParameterTool parameterTool = ExecutionEnvUtil.createParameterTool(args);
-        StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);
-
-        DataStream<Tuple4<String, String, Integer, Integer>> gamePlayStream =  getGamePlayStream(env, parameterTool);
-        DataStream<Tuple4<String, String, Integer, Integer>> browseStream = getBrowseStream(env, parameterTool);
-        JoinedStreams<Tuple4<String, String, Integer, Integer>, Tuple4<String, String, Integer, Integer>> joinStream = gamePlayStream.join(browseStream);
-        DataStream<Tuple3<String, String, Integer>> joinWindow = joinStream.where(new NameKeySelector())
-                .equalTo(new NameKeySelector())
-                .window(TumblingEventTimeWindows.of(Time.seconds(Integer.valueOf(parameterTool.getRequired(PropertiesConstants.FLINK_WINDOW_SIZE)))))
-                .apply(new JoinFunction<Tuple4<String,String, Integer, Integer>, Tuple4<String, String, Integer,Integer>, Tuple3<String, String, Integer>>() {
-                    @Override
-                    public Tuple3<String, String, Integer> join(Tuple4<String, String, Integer, Integer> jn1, Tuple4<String, String, Integer, Integer> jn2) throws Exception {
-                        return Tuple3.of(jn1.f0, jn1.f1, jn1.f3);
-                    }
-                });
-        joinWindow.keyBy(0).sum(1).map(item -> item.f0 + " " + item.f2)
-                .addSink(new FlinkKafkaProducer011(parameterTool.getRequired("kafka.brokers"),
-                        parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),
-                        new SimpleStringSchema()));
-    }
 
     private static DataStream<Tuple4<String, String, Integer, Integer>> getGamePlayStream(StreamExecutionEnvironment env, ParameterTool parameterTool) {
         int recordMaxNum = Integer.valueOf(parameterTool.getRequired("gameplay.record.max.num"));
@@ -58,6 +37,11 @@ public class GamePlayJoinWindowApplication {
             @Override
             public Tuple4<String, String, Integer, Integer> map(GamePlayEvent gamePlayEvent) throws Exception {
                 return Tuple4.of(gamePlayEvent.getGameId(), gamePlayEvent.getUserId(), gamePlayEvent.getStartTime(), 1);
+            }
+        }).assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<Tuple4<String,String, Integer, Integer>>(Time.seconds(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_MAX_OUTOFORDERNESS))) {
+            @Override
+            public long extractTimestamp(Tuple4<String, String, Integer, Integer> event) {
+                return (long) (event.f2 * 1000L);
             }
         });
 
@@ -77,6 +61,11 @@ public class GamePlayJoinWindowApplication {
             public Tuple4<String, String, Integer, Integer> map(GameBrowseEvent gameBrowseEvent) throws Exception {
                 return Tuple4.of(gameBrowseEvent.getGameId(), gameBrowseEvent.getUserId(), gameBrowseEvent.getStartTime(), 1);
             }
+        }).assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<Tuple4<String,String, Integer, Integer>>(Time.seconds(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_MAX_OUTOFORDERNESS))) {
+            @Override
+            public long extractTimestamp(Tuple4<String, String, Integer, Integer> event) {
+                return (long) (event.f2 * 1000L);
+            }
         });
 
         return gameBrowseStream;
@@ -87,5 +76,30 @@ public class GamePlayJoinWindowApplication {
         public String getKey(Tuple4<String, String, Integer, Integer> value) {
             return value.f0+"_"+value.f1;
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+        System.out.println("Hello GamePlayJoinWindow");
+        ParameterTool parameterTool = ExecutionEnvUtil.createParameterTool(args);
+        StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);
+
+        DataStream<Tuple4<String, String, Integer, Integer>> gamePlayStream =  getGamePlayStream(env, parameterTool);
+        DataStream<Tuple4<String, String, Integer, Integer>> browseStream = getBrowseStream(env, parameterTool);
+        JoinedStreams<Tuple4<String, String, Integer, Integer>, Tuple4<String, String, Integer, Integer>> joinStream = gamePlayStream.join(browseStream);
+        DataStream<Tuple3<String, String, Integer>> joinWindow = joinStream
+                .where(new NameKeySelector())
+                .equalTo(new NameKeySelector())
+                .window(TumblingEventTimeWindows.of(Time.seconds(Integer.valueOf(parameterTool.getRequired(PropertiesConstants.FLINK_WINDOW_SIZE)))))
+                .apply(new JoinFunction<Tuple4<String,String, Integer, Integer>, Tuple4<String, String, Integer,Integer>, Tuple3<String, String, Integer>>() {
+                    @Override
+                    public Tuple3<String, String, Integer> join(Tuple4<String, String, Integer, Integer> jn1, Tuple4<String, String, Integer, Integer> jn2) throws Exception {
+                        return Tuple3.of(jn1.f0, jn1.f1, jn1.f3);
+                    }
+                });
+        joinWindow.keyBy(0).sum(2).map(item -> item.f0 + " " + item.f2)
+                .addSink(new FlinkKafkaProducer011(parameterTool.getRequired(PropertiesConstants.KAFKA_BROKERS_KEY),
+                        parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),
+                        new SimpleStringSchema()));
+        env.execute("GamePlay Join GameBrower with Window");
     }
 }
