@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.sql.Date;
 
 public class DateTimeUtil {
+    public final static long SECONDS = 1000L;
+
     public static long getTimeStampMS(String timeStr, String dateStrFormat) throws ParseException {
         SimpleDateFormat df = new SimpleDateFormat(dateStrFormat);
         return df.parse(timeStr).getTime();

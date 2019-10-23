@@ -1,32 +1,33 @@
 package org.flink.example.usercase.streaming.assigner.sink;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.flink.api.common.typeutils.base.StringSerializer;
 import org.apache.flink.core.io.SimpleVersionedSerializer;
 import org.apache.flink.streaming.api.functions.sink.filesystem.BucketAssigner;
+import org.apache.flink.streaming.api.functions.sink.filesystem.bucketassigners.SimpleVersionedStringSerializer;
 import org.flink.example.usercase.streaming.util.DateTimeUtil;
 
 import java.text.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JsonEventTimeBucketAssigner implements BucketAssigner<String, String> {
-    private static Logger logger = LoggerFactory.getLogger(JsonEventTimeBucketAssigner.class);
+public class JSONEventTimeBucketAssigner<IN> implements BucketAssigner<String, String> {
+    private static Logger logger = LoggerFactory.getLogger(JSONEventTimeBucketAssigner.class);
     private String dateTimeFormat;
     private String filed;
+    private boolean isMS = false;
 
-    public JsonEventTimeBucketAssigner() {}
-
-    public JsonEventTimeBucketAssigner(String jsonFiled, String dateTimeFormat) {
+    public JSONEventTimeBucketAssigner(String jsonFiled, String dateTimeFormat, boolean isMS) {
         this.dateTimeFormat = dateTimeFormat;
         this.filed = jsonFiled;
+        this.isMS = isMS;
     }
 
     @Override
     public String getBucketId(String eventJsonStr, Context context) {
         try {
             JSONObject json = JSONObject.parseObject(eventJsonStr);
-            String parititionValue = DateTimeUtil.getTimeStampStr(json.getInteger(filed) , dateTimeFormat);
+            long eventTime = isMS ? json.getLong(filed) : json.getLong(filed) * DateTimeUtil.SECONDS;
+            String parititionValue = DateTimeUtil.getTimeStampStr(eventTime , dateTimeFormat);
             return parititionValue;
         } catch (ParseException e) {
             logger.error(e.getMessage());
@@ -36,6 +37,6 @@ public class JsonEventTimeBucketAssigner implements BucketAssigner<String, Strin
 
     @Override
     public SimpleVersionedSerializer<String> getSerializer() {
-        return null;
+        return SimpleVersionedStringSerializer.INSTANCE;
     }
 }
