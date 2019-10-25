@@ -23,7 +23,8 @@ public class GamePlayDataCollectorParquetApplication {
 
     final StreamingFileSink sink = StreamingFileSink
                 .forBulkFormat(new Path(parameterTool.getRequired("hdfs.sink.path")), ParquetAvroWriters.forReflectRecord(GamePlayEvent.class))
-                .withBucketAssigner(new DateTimeBucketAssigner("yyyyMMddHHmm"))
+                .withBucketAssigner(new DateTimeBucketAssigner("yyyyMMddHH"))
+                .withBucketCheckInterval(60000)
                 .build();
 
         KafkaConfigUtil.buildSource(env)
@@ -34,6 +35,6 @@ public class GamePlayDataCollectorParquetApplication {
             }
         })
       .addSink(sink);
-        env.execute("GamePlay Data Collector Application");
+        env.execute("GamePlay Data Collector For Parquet Application ");
     }
 }
