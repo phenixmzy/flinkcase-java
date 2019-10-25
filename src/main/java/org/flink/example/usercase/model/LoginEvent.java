@@ -5,6 +5,12 @@ public class LoginEvent {
     private String ip;
     private String type;
 
+    public LoginEvent(String userId, String ip, String type) {
+        this.userId = userId;
+        this.ip = ip;
+        this.type = type;
+    }
+
     public String getUserId() {
         return userId;
     }
