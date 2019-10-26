@@ -1,7 +1,5 @@
 package org.flink.example.usercase.model;
 
-import java.util.Objects;
-
 public class GamePlayEvent {
     private String gameId;
     private String userId;
