@@ -1,5 +1,6 @@
 package org.flink.example.usercase.streaming.application.gameplay;
 
+import org.flink.example.usercase.streaming.application.map.GamePlayMapFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ public class GamePlayStreamingApplication {
         final ParameterTool parameterTool = ExecutionEnvUtil.createParameterTool(args);
         StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);
         DataStreamSource<String> source = KafkaConfigUtil.buildSource(env);
-        source.map(gamePlayJson -> GsonUtil.fromJson(gamePlayJson, GamePlayEvent.class))
+        source.map(new GamePlayMapFunction())
                 .map(gamePlay -> {
                     String gameId = gamePlay.getGameId();
                     return gameId;
