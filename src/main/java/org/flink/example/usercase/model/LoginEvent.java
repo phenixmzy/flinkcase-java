@@ -34,4 +34,13 @@ public class LoginEvent {
     public void setType(String type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return "LoginEvent{" +
+                "userId='" + userId + '\'' +
+                ", type='" + type + '\'' +
+                ", ip='" + ip + '\'' +
+                '}';
+    }
 }

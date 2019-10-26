@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Arrays;
 
 public class LoginEventSource  implements SourceFunction<LoginEvent> {
-    private static final List<LoginEvent> EVENT_LIST = Arrays.asList(
+    public static final List<LoginEvent> EVENT_LIST = Arrays.asList(
             new LoginEvent("小明", "192.168.0.1", "fail"),
                 new LoginEvent("小明", "192.168.0.2", "fail"),
                 new LoginEvent("小王", "192.168.10,11", "fail"),

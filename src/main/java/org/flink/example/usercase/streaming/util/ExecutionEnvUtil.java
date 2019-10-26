@@ -12,34 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ExecutionEnvUtil {
-    /*
-    private final static long ONE_SECONDS = 1000;
-    private final static long ONE_MIN = ONE_SECONDS * 60;
-
-    public static long getCheckPointInteravlMin(long timeMin) {
-        return timeMin * ONE_MIN;
-    }
-
-    public static long getCheckPointTimeOutMin(long timeOutMin) {
-        return timeOutMin * ONE_MIN;
-    }
-
-    public static StreamExecutionEnvironment getStreamEnvironment(ParameterTool params) {
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.getConfig().disableSysoutLogging();
-        env.getConfig().setRestartStrategy(RestartStrategies.fixedDelayRestart(4, 10000));
-
-        // create a checkpoint every 5 min
-        env.enableCheckpointing(getCheckPointInteravlMin(1));
-        env.getCheckpointConfig().setCheckpointTimeout(getCheckPointTimeOutMin(10));
-        env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
-
-        // make parameters available in the web interface
-        env.getConfig().setGlobalJobParameters(params);
-        return env;
-    }
-    */
-
     public static final ParameterTool PARAMETER_TOOL = createParameterTool();
 
     private static ParameterTool createParameterTool() {
@@ -64,9 +36,13 @@ public class ExecutionEnvUtil {
     }
 
     public static StreamExecutionEnvironment prepare(ParameterTool parameterTool) throws Exception {
+        return prepare(parameterTool, TimeCharacteristic.EventTime);
+    }
+
+    public static StreamExecutionEnvironment prepare(ParameterTool parameterTool, TimeCharacteristic timeCharacteristic) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_PARALLELISM_KEY, 5));
-        env.getConfig().disableSysoutLogging();
+        //env.getConfig().disableSysoutLogging();
         env.getConfig().setRestartStrategy(RestartStrategies.fixedDelayRestart(4, 10000));
         if (parameterTool.getBoolean(PropertiesConstants.FLINK_STREAM_CHECKPOINT_ENABLE_KEY, true)) {
             env.enableCheckpointing(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_INTERVAL_KEY, 1000)); // create a checkpoint every 5 seconds
@@ -74,7 +50,7 @@ public class ExecutionEnvUtil {
         }
 
         env.getConfig().setGlobalJobParameters(parameterTool); // make parameters available in the web interface
-        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+        env.setStreamTimeCharacteristic(timeCharacteristic);
         return env;
     }
 
