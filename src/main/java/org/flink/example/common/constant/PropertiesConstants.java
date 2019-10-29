@@ -36,6 +36,7 @@ public class PropertiesConstants {
     public static final String FLINK_STREAM_DEFAULT_PARALLELISM_KEY = "flink.stream.default.parallelism";
     public static final String FLINK_STREAM_CHECKPOINT_ENABLE_KEY = "flink.stream.checkpoint.enable";
     public static final String FLINK_STREAM_CHECKPOINT_INTERVAL_KEY = "flink.stream.checkpoint.interval";
+    public static final String FLINK_STREAM_CHECKPOINT_TIMEOUT_MS_KEY = "flink.stream.checkpoint.timeout.ms";
 
     public static final String PROPERTIES_FILE_NAME = "/application.properties";
 

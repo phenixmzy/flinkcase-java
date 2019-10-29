@@ -4,6 +4,7 @@ import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.flink.streaming.api.environment.CheckpointConfig;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.flink.example.common.constant.PropertiesConstants;
 
@@ -47,6 +48,8 @@ public class ExecutionEnvUtil {
         if (parameterTool.getBoolean(PropertiesConstants.FLINK_STREAM_CHECKPOINT_ENABLE_KEY, true)) {
             env.enableCheckpointing(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_INTERVAL_KEY, 1000)); // create a checkpoint every 5 seconds
             env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
+            env.getCheckpointConfig().enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+            env.getCheckpointConfig().setCheckpointTimeout(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_TIMEOUT_MS_KEY, 6000));
         }
 
         env.getConfig().setGlobalJobParameters(parameterTool); // make parameters available in the web interface
