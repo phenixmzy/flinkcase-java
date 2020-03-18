@@ -34,12 +34,12 @@ public class T3AssignerWithPeriodicWatermarks implements AssignerWithPeriodicWat
     @Override
     public long extractTimestamp(Tuple3<String, Integer, Integer> item, long l) {
         // 获取当前事件时间(item.f1), 对比当前事件时间和历史最大时间,将最新的时间赋值给currentMaxTimestamp
-        //currentMaxTimestamp = Math.max(currentEventTimeStamp, currentMaxTimestamp);
-        logger.info("start extractTimestamp()  currentMaxTimestamp=" + currentMaxTimestamp);
+        //currentMaxTimestampMS = Math.max(currentEventTimeStamp, currentMaxTimestampMS);
+        logger.info("start extractTimestamp()  currentMaxTimestampMS=" + currentMaxTimestamp);
         if (item.f1 > currentMaxTimestamp) {
             currentMaxTimestamp = item.f1;
         }
-        logger.info("end extractTimestamp() item.f1= " + item.f1 + " currentMaxTimestamp=" + currentMaxTimestamp);
+        logger.info("end extractTimestamp() item.f1= " + item.f1 + " currentMaxTimestampMS=" + currentMaxTimestamp);
         // 返回最大事件事件
         return currentMaxTimestamp;
     }

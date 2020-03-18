@@ -4,12 +4,10 @@ import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.functions.KeySelector;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.JoinedStreams;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
@@ -38,7 +36,7 @@ public class GamePlayJoinWindowApplication {
             public Tuple4<String, String, Integer, Integer> map(GamePlayEvent gamePlayEvent) throws Exception {
                 return Tuple4.of(gamePlayEvent.getGameId(), gamePlayEvent.getUserId(), gamePlayEvent.getStartTime(), 1);
             }
-        }).assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<Tuple4<String,String, Integer, Integer>>(Time.seconds(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_MAX_OUTOFORDERNESS))) {
+        }).assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<Tuple4<String,String, Integer, Integer>>(Time.seconds(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_MAX_OUTOFORDERNESS_MS))) {
             @Override
             public long extractTimestamp(Tuple4<String, String, Integer, Integer> event) {
                 return (long) (event.f2 * 1000L);
@@ -59,9 +57,9 @@ public class GamePlayJoinWindowApplication {
 
             @Override
             public Tuple4<String, String, Integer, Integer> map(GameBrowseEvent gameBrowseEvent) throws Exception {
-                return Tuple4.of(gameBrowseEvent.getGameId(), gameBrowseEvent.getUserId(), gameBrowseEvent.getStartTime(), 1);
+                return Tuple4.of(gameBrowseEvent.getGameId(), gameBrowseEvent.getUserId(), gameBrowseEvent.getBrowseTime(), 1);
             }
-        }).assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<Tuple4<String,String, Integer, Integer>>(Time.seconds(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_MAX_OUTOFORDERNESS))) {
+        }).assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<Tuple4<String,String, Integer, Integer>>(Time.seconds(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_MAX_OUTOFORDERNESS_MS))) {
             @Override
             public long extractTimestamp(Tuple4<String, String, Integer, Integer> event) {
                 return (long) (event.f2 * 1000L);

@@ -29,7 +29,7 @@ public class HDFSAuditOperationWindowApplication {
                 HDFSAuditEvent event = GsonUtil.fromJson(s, HDFSAuditEvent.class);
                 return Tuple3.of(event.getCmd(), event.getTimeStampMS(),1);
             }
-    }).assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<Tuple3<String,Long,Integer>>(Time.seconds(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_MAX_OUTOFORDERNESS))) {
+    }).assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<Tuple3<String,Long,Integer>>(Time.seconds(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_MAX_OUTOFORDERNESS_MS))) {
             @Override
             public long extractTimestamp(Tuple3<String,Long,Integer> event) {
                 return event.f1;

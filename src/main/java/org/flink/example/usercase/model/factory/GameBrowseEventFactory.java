@@ -14,8 +14,6 @@ public class GameBrowseEventFactory {
         int currTimeStamp = (int)(System.currentTimeMillis()/1000) ;
         int delay = getRandNum(1, maxDelay);
         int timeLen = getRandNum(1, maxTimeLen);
-        int leaveTime = currTimeStamp - delay;
-        int startTime = leaveTime - timeLen;
         String gameType = gameTypes[getRandNum(0,4) % 4];
         String channelFrom = channelFroms[getRandNum(0,8) % 8];
         String site = sites[getRandNum(0,6) % 6];
@@ -24,8 +22,7 @@ public class GameBrowseEventFactory {
         GameBrowseEvent gameBrowseEvent = new GameBrowseEvent();
         gameBrowseEvent.setGameId(gameId);
         gameBrowseEvent.setUserId(userId);
-        gameBrowseEvent.setStartTime(startTime);
-        gameBrowseEvent.setLeaveTime(leaveTime);
+        gameBrowseEvent.setBrowseTime(currTimeStamp);
         gameBrowseEvent.setGameType(gameType);
         gameBrowseEvent.setChannelFrom(channelFrom);
         gameBrowseEvent.setSite(site);
@@ -48,7 +45,7 @@ public class GameBrowseEventFactory {
 
     public static void main(String[] args) {
         GameBrowseEvent envent = new GameBrowseEvent();
-        System.out.println("gameId="+envent.getGameId() + " userId=" + envent.getUserId() + " userIp=" + envent.getUserIp()+ " startTime=" + envent.getStartTime() + " channelFrom=" + envent.getChannelFrom() + " gameType=" + envent.getGameType());
+        System.out.println("gameId="+envent.getGameId() + " userId=" + envent.getUserId() + " userIp=" + envent.getUserIp()+ " browseTime=" + envent.getBrowseTime() + " channelFrom=" + envent.getChannelFrom() + " gameType=" + envent.getGameType());
     }
 
 }
