@@ -10,6 +10,9 @@ public class GamePlayEvent {
     private String gameType;
     private String channelFrom;
     private String site;
+    private String clientVersion;
+    private String clientApp;
+
 
     public String getGameId() {
         return gameId;
@@ -81,6 +84,22 @@ public class GamePlayEvent {
 
     public void setSite(String site) {
         this.site = site;
+    }
+
+    public String getClientVersion() {
+        return clientVersion;
+    }
+
+    public void setClientVersion(String clientVersion) {
+        this.clientVersion = clientVersion;
+    }
+
+    public String getClientApp() {
+        return clientApp;
+    }
+
+    public void setClientApp(String clientApp) {
+        this.clientApp = clientApp;
     }
 
   /*  @Override

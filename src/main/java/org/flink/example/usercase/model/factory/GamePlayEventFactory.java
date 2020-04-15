@@ -4,6 +4,8 @@ import org.flink.example.usercase.model.GamePlayEvent;
 
 public class GamePlayEventFactory {
     private final static String IP_SPLIT = ".";
+    private final static String[] CLIENT_APPS = new String[]{"kuaiwan", "kuaibo", "baidu", "kuwo"};
+    private final static String[] CLIENT_VERSIONS = new String[]{"3.3.12", "2.7.5", "3.2.11", "3.5.25"};
     private final static String[] gameTypes = new String[]{"exe", "web", "online", "flash"};
     private final static String[] channelFroms = new String[]{"my","category", "game_helper", "recommend", "762", "4399", "relateflash", "kuwo"};
     private final static String[] sites = new String[]{"index", "kw", "qvod", "baidu", "tx", "kugo"};
@@ -17,6 +19,8 @@ public class GamePlayEventFactory {
         int leaveTime = currTimeStamp - delay;
         int startTime = leaveTime - timeLen;
         String gameType = gameTypes[getRandNum(0,4) % 4];
+        String clientApp = CLIENT_APPS[getRandNum(0,4) % 4];
+        String clientVersion = CLIENT_VERSIONS[getRandNum(0,4) % 4];
         String channelFrom = channelFroms[getRandNum(0,8) % 8];
         String site = sites[getRandNum(0,6) % 6];
         String userIp = getUserIp();
@@ -30,6 +34,8 @@ public class GamePlayEventFactory {
         gamePlayEvent.setChannelFrom(channelFrom);
         gamePlayEvent.setSite(site);
         gamePlayEvent.setUserIp(userIp);
+        gamePlayEvent.setClientVersion(clientVersion);
+        gamePlayEvent.setClientApp(clientApp);
         return gamePlayEvent;
     }
 
