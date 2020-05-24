@@ -95,10 +95,29 @@ public class KafkaConfigUtil {
         return env.addSource(consumer);
     }
 
+    public static DataStreamSource<String> buildSource(StreamExecutionEnvironment env, List<String> topicList, Long offsetTime) {
+        ParameterTool parameter = (ParameterTool)env.getConfig().getGlobalJobParameters();
+        Properties props = buildkafkaProps(parameter);
+        FlinkKafkaConsumer011<String> consumer = new FlinkKafkaConsumer011<String>(topicList, new SimpleStringSchema(), props);
+       if (offsetTime != 0L) { //重置offset到time时刻
+           for (String topic : topicList) {
+               Map<KafkaTopicPartition, Long> partitionOffset = buildOffsetByTime(props, topic, offsetTime);
+               consumer.setStartFromSpecificOffsets(partitionOffset);
+           }
+        }
+        return env.addSource(consumer);
+    }
+
+
     private static Map<KafkaTopicPartition, Long> buildOffsetByTime(Properties props, ParameterTool parameterTool, Long time) {
+        String topic = parameterTool.getRequired(PropertiesConstants.KAFKA_SOURCE_TOPIC_KEY);
+        return buildOffsetByTime(props, topic, time);
+    }
+
+    private static Map<KafkaTopicPartition, Long> buildOffsetByTime(Properties props, String topic, Long time) {
         props.setProperty("group.id", "query_time_" + time);
         KafkaConsumer consumer = new KafkaConsumer(props);
-        List<PartitionInfo> partitions = consumer.partitionsFor(parameterTool.getRequired(PropertiesConstants.KAFKA_SOURCE_TOPIC_KEY));
+        List<PartitionInfo> partitions = consumer.partitionsFor(topic);
         Map<TopicPartition, Long> partitionInfoLongMap = new HashMap();
         for (PartitionInfo partitionInfo : partitions) {
             partitionInfoLongMap.put(new TopicPartition(partitionInfo.topic(), partitionInfo.partition()), time);
