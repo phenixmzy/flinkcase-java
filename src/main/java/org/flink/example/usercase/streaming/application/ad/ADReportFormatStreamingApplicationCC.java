@@ -20,6 +20,7 @@ import java.util.ArrayList;
 public class ADReportFormatStreamingApplicationCC {
     private static final Logger LOGGER = LoggerFactory.getLogger(ADReportFormatStreamingApplicationCC.class);
 
+
     public static void main(String[] args) throws Exception {
         final ParameterTool parameterTool = ExecutionEnvUtil.createParameterTool(args);
         StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);

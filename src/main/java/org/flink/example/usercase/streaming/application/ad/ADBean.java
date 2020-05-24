@@ -4,6 +4,7 @@ public class ADBean {
     private String nameService;
     private String dataJson;
 
+
     public String getNameService() {
         return nameService;
     }
