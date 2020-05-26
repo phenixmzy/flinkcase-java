@@ -7,7 +7,6 @@ import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011;
-import org.apache.flink.streaming.connectors.kafka.internal.FlinkKafkaProducer;
 import org.apache.flink.streaming.connectors.kafka.internals.KafkaTopicPartition;
 import org.apache.flink.streaming.util.serialization.KeyedSerializationSchema;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -99,6 +98,12 @@ public class KafkaConfigUtil {
         return env.addSource(consumer);
     }
 
+    public static DataStreamSource<String> buildSource(StreamExecutionEnvironment env, List<String> topicList) {
+        ParameterTool parameter = (ParameterTool) env.getConfig().getGlobalJobParameters();
+        Long offsetTime = parameter.getLong(PropertiesConstants.KAFKA_CONSUMER_FROM_TIME_KEY, 0L);
+        return buildSource(env, topicList, offsetTime);
+    }
+
     public static DataStreamSource<String> buildSource(StreamExecutionEnvironment env, List<String> topicList, Long offsetTime) {
         ParameterTool parameter = (ParameterTool) env.getConfig().getGlobalJobParameters();
         Properties props = buildkafkaProps(parameter);
@@ -143,3 +148,4 @@ public class KafkaConfigUtil {
         return partitionOffset;
     }
 }
+

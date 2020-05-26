@@ -1,6 +1,8 @@
 package org.flink.example.common.constant;
 
 public class PropertiesConstants {
+    public static final String NAME_SERVICES_KEY = "name.services";
+
     // kafka config
     public static final String KAFKA_BROKERS_KEY = "kafka.brokers";
     public static final String DEFAULT_KAFKA_BROKERS_VALUE = "localhost:9092";
