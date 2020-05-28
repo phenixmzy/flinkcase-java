@@ -27,6 +27,7 @@ import org.flink.example.usercase.model.LoginEvent;
 import org.flink.example.usercase.streaming.assigner.sink.JSONEventTimeBucketAssigner;
 import org.flink.example.usercase.streaming.source.LoginEventSource;
 import org.flink.example.usercase.streaming.util.ExecutionEnvUtil;
+import org.flink.example.usercase.streaming.util.KafkaConfigUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,9 +89,7 @@ public class FlinkLoginFail {
         );
 
         // 发送告警用户
-        loginFailDataStream.addSink(new FlinkKafkaProducer011(parameterTool.getRequired("kafka.brokers"),
-                parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),
-                new SimpleStringSchema()));
+        loginFailDataStream.addSink(KafkaConfigUtil.buildSink(parameterTool));
         env.execute("CEP Login Fail");
     }
 }

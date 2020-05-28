@@ -1,7 +1,16 @@
 package org.flink.example.common.constant;
 
 public class PropertiesConstants {
+    // apollo
     public static final String NAME_SERVICES_KEY = "name.services";
+
+    // canal
+    public static final String CANAL_JSON_DATA_DATABASE_KEY = "database";
+    public static final String CANAL_JSON_DATA_TABLE_KEY = "table";
+    public static final String CANAL_JSON_DATA_DATA_KEY = "data";
+    public static final String CANAL_JSON_DATA_TS_KEY = "ts";
+    public static final String CANAL_JSON_DATA_ACTION_TYPE_KEY = "type";
+
 
     // kafka config
     public static final String KAFKA_BROKERS_KEY = "kafka.brokers";

@@ -13,13 +13,14 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.flink.example.common.constant.PropertiesConstants;
 import org.flink.example.usercase.model.GameBrowseEvent;
 import org.flink.example.usercase.model.GamePlayEvent;
 import org.flink.example.usercase.streaming.source.GameBrowseEventSource;
 import org.flink.example.usercase.streaming.source.GamePlayEventSource;
 import org.flink.example.usercase.streaming.util.ExecutionEnvUtil;
+import org.flink.example.usercase.streaming.util.KafkaConfigUtil;
 
 public class GamePlayJoinWindowApplication {
 
@@ -95,9 +96,7 @@ public class GamePlayJoinWindowApplication {
                     }
                 });
         joinWindow.keyBy(0).sum(2).map(item -> item.f0 + " " + item.f2)
-                .addSink(new FlinkKafkaProducer011(parameterTool.getRequired(PropertiesConstants.KAFKA_BROKERS_KEY),
-                        parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),
-                        new SimpleStringSchema()));
+                .addSink(KafkaConfigUtil.buildSink(parameterTool));
         env.execute("GamePlay Join GameBrower with Window");
     }
 }

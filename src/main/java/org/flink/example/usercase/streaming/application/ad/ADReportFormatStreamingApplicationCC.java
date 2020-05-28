@@ -33,7 +33,7 @@ public class ADReportFormatStreamingApplicationCC {
         StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);
         String nameServices = parameterTool.getRequired(PropertiesConstants.NAME_SERVICES_KEY);
 
-        DataStreamSource<String> source = KafkaConfigUtil.buildSource(env, getSourceTopics());
+        DataStreamSource<String> source = KafkaConfigUtil.buildSource(env);
 
         source.map(new MRichMapFunction(nameServices.split(",")))
                 .addSink(KafkaConfigUtil.buildSink(parameterTool));

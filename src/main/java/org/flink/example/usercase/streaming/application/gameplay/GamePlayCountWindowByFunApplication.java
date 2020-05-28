@@ -6,8 +6,7 @@ import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.flink.example.common.constant.PropertiesConstants;
 import org.flink.example.usercase.model.GamePlayEvent;
 import org.flink.example.usercase.streaming.function.CountWindowAverage;
@@ -30,9 +29,7 @@ public class GamePlayCountWindowByFunApplication {
                 .keyBy(0)
                 .flatMap(new CountWindowAverage())
                 .map(item -> item.f0+"-"+item.f1+"-"+item.f2)
-                .addSink(new FlinkKafkaProducer011<String>(parameterTool.getRequired(PropertiesConstants.KAFKA_BROKERS_KEY),
-                        parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),
-                        new SimpleStringSchema()))
+                .addSink(KafkaConfigUtil.buildSink(parameterTool))
         ;
         env.execute("Gameplay Count Window By Fun State");
     }

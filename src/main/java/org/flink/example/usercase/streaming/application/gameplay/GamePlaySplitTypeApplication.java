@@ -9,7 +9,7 @@ import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.ProcessFunction;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.apache.flink.util.Collector;
 import org.apache.flink.util.OutputTag;
 import org.flink.example.common.constant.PropertiesConstants;
@@ -93,9 +93,6 @@ public class GamePlaySplitTypeApplication {
                 context.output(outputTag, gamePlayEvent);
             }
         }).map(gamePlayEvent -> gamePlayEvent.toString())
-                .getSideOutput(exeOutputTag).addSink(
-                new FlinkKafkaProducer011(parameterTool.getRequired(PropertiesConstants.KAFKA_BROKERS_KEY),
-                parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),
-                new SimpleStringSchema()));
+                .getSideOutput(exeOutputTag).addSink(KafkaConfigUtil.buildSink(parameterTool));
     }
 }

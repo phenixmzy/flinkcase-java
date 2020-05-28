@@ -8,7 +8,7 @@ import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.flink.example.common.constant.PropertiesConstants;
 import org.flink.example.usercase.model.GamePlayEvent;
 import org.flink.example.usercase.streaming.assigner.window.GamePlayBoundedOutOfOrdernessTimestampExtractor;
@@ -42,7 +42,7 @@ public class GamePlayWindowApplication {
                     builder.append(item.f0).append(" ").append(item.f2);
                     return builder.toString();
                 })
-                .addSink(new FlinkKafkaProducer011(parameterTool.getRequired(PropertiesConstants.KAFKA_BROKERS_KEY),
+                .addSink(new FlinkKafkaProducer(parameterTool.getRequired(PropertiesConstants.KAFKA_BROKERS_KEY),
                         parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),
                         new SimpleStringSchema()));
         env.execute("Window GamePlayCount ");

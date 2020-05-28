@@ -8,7 +8,7 @@ import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 
 import org.flink.example.common.constant.PropertiesConstants;
 import org.flink.example.usercase.model.GamePlayEvent;
@@ -28,9 +28,7 @@ public class GamePlayStreamingApplication {
                     String gameId = gamePlay.getGameId();
                     return gameId;
                 })
-                .addSink(new FlinkKafkaProducer011(parameterTool.getRequired("kafka.brokers"),
-                        parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),
-                        new SimpleStringSchema()));
+                .addSink(KafkaConfigUtil.buildSink(parameterTool));
         env.execute("Streaming GamePlay Kafka to Kafka");
 
     }

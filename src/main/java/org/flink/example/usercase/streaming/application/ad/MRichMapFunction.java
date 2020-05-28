@@ -8,26 +8,30 @@ import com.ctrip.framework.apollo.model.ConfigChange;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.configuration.Configuration;
+import org.flink.example.common.constant.PropertiesConstants;
 import org.flink.example.usercase.streaming.application.configcenter.ConfigCenterManager;
 import org.flink.example.usercase.streaming.application.configcenter.ConfigValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
-//https://ci.apache.org/projects/flink/flink-docs-release-1.10/zh/dev/connectors/kafka.html
-public class MRichMapFunction extends RichMapFunction<String, String> {
+public class MRichMapFunction extends RichMapFunction<String, RecordData> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MRichMapFunction.class);
     private String[] serviceNames;
+
+    private HashMap<String, ConfigValue> configValues = new HashMap<String, ConfigValue>();
+    private HashMap<String, ArrayList<String>> fields = new HashMap<String, ArrayList<String>>();
 
     public MRichMapFunction(String[] serviceNames) {
         this.serviceNames = serviceNames;
     }
 
-    private HashMap<String, ArrayList<String>> FIELD_LIST = new HashMap<String, ArrayList<String>>();
-
-    private void reload() {
+    private void reloadConfig() {
+        /*
         Config config = ConfigService.getAppConfig();
         for (String sn : this.serviceNames) {
             ConfigValue cv = ConfigCenterManager.getConfigValues().get(sn);
@@ -44,6 +48,15 @@ public class MRichMapFunction extends RichMapFunction<String, String> {
                 }
             }
         });
+        */
+    }
+
+    private void reload() {
+        configValues.putAll(ConfigCenterManager.getConfigValues());
+        Set<String> keySet = configValues.keySet();
+        for (String key : keySet) {
+            fields.put(key, getConfigFields(configValues.get(key).getFields()));
+        }
     }
 
     @Override
@@ -54,26 +67,24 @@ public class MRichMapFunction extends RichMapFunction<String, String> {
     }
 
     @Override
-    public String map(String eventJsonStr) throws Exception {
-        LOGGER.info("GET FIELD_LIST:");
-        LOGGER.info(eventJsonStr);
+    public RecordData map(String eventJsonStr) throws Exception {
         JSONObject json = JSONObject.parseObject(eventJsonStr);
-        return getFormatStr(json);
+        String fieldsKey = json.getString(PropertiesConstants.CANAL_JSON_DATA_TABLE_KEY);
+        return getRecordData(json, fieldsKey);
     }
 
-    private ArrayList<String> getConfigFields(String a_service_config_fields) {
+    private ArrayList<String> getConfigFields(String config_fields) {
         ArrayList<String> fieldList = new ArrayList<String>();
-        String[] fields = a_service_config_fields.split(",");
+        String[] fields = config_fields.split(",");
         for (String field : fields) {
             fieldList.add(field);
         }
         return fieldList;
     }
 
-    private String getFormatStr(JSONObject json) {
+    private RecordData getRecordData(JSONObject json, String fieldsKey) {
         StringBuilder builder = new StringBuilder();
-        String docName = json.getString("doc_name");
-        ArrayList<String> fieldList = FIELD_LIST.get(docName);
+        ArrayList<String> fieldList = fields.get(fieldsKey);
         for (String field : fieldList) {
             Object value = json.get(field);
             if (value == null) {
@@ -82,6 +93,9 @@ public class MRichMapFunction extends RichMapFunction<String, String> {
             }
             builder.append(value.toString()).append(ConfigCenterManager.SPLIT_FLAG);
         }
-        return builder.length() > 0 ? builder.substring(0, builder.length() - ConfigCenterManager.SPLIT_FLAG.length()) : "";
+
+        String outputData =  builder.length() > 0 ? builder.substring(0, builder.length() - ConfigCenterManager.SPLIT_FLAG.length()) : "";
+        RecordData rd = new RecordData(fieldsKey, outputData);
+        return rd;
     }
 }

@@ -7,7 +7,7 @@ import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.flink.example.common.constant.PropertiesConstants;
 import org.flink.example.usercase.streaming.util.ExecutionEnvUtil;
 import org.flink.example.usercase.streaming.util.KafkaConfigUtil;
@@ -74,9 +74,7 @@ public class ADReportFormatStreamingApplication {
                 }
                 return builder.length() > 0 ? builder.substring(0, builder.length() - SPLIT_FLAG.length()) : "";
             }
-        }).addSink(new FlinkKafkaProducer011(parameterTool.getRequired("kafka.brokers"),
-                parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),
-                new SimpleStringSchema()));
+        }).addSink(KafkaConfigUtil.buildSink(parameterTool));
         env.execute("Streaming toutiao-ad-report json to cvs to kafka");
 
     }

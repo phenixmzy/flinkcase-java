@@ -39,9 +39,7 @@ public class HDFSAuditOperationWindowApplication {
         .timeWindowAll(Time.of(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_SIZE),SECONDS),
                 Time.of(parameterTool.getLong(PropertiesConstants.FLINK_WINDOW_SLIDE),SECONDS))
                 .sum(0).map(item -> item.f0 + " " + item.f2)
-                .addSink(new FlinkKafkaProducer011(parameterTool.getRequired(PropertiesConstants.KAFKA_BROKERS_KEY),
-                        parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),
-                        new SimpleStringSchema()));
+                .addSink(KafkaConfigUtil.buildSink(parameterTool));
 
         env.execute("Window HDFS Audit Operation Count");
     }

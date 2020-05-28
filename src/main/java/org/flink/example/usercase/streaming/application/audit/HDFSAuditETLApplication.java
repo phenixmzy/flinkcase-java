@@ -23,8 +23,7 @@ public class HDFSAuditETLApplication {
             HDFSAuditEvent event = LogEventsParseUtil.parseHDFSAuditEvent(auditLog);
             return event;
         }).map(event -> GsonUtil.toJson(event))
-        .addSink(new FlinkKafkaProducer011(parameterTool.getRequired("kafka.brokers"),
-                parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),  new SimpleStringSchema()));
+        .addSink(KafkaConfigUtil.buildSink(parameterTool));
         env.execute("HDFS Audit ETL Application");
     }
 

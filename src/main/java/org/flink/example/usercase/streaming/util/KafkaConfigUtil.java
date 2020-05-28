@@ -2,13 +2,11 @@ package org.flink.example.usercase.streaming.util;
 
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.utils.ParameterTool;
-import org.apache.flink.streaming.api.datastream.DataStreamSink;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.apache.flink.streaming.connectors.kafka.internals.KafkaTopicPartition;
-import org.apache.flink.streaming.util.serialization.KeyedSerializationSchema;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
@@ -16,8 +14,8 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.flink.example.common.constant.PropertiesConstants;
-import org.flink.example.usercase.streaming.application.ad.ADBean;
-import org.flink.example.usercase.streaming.application.ad.ADKafkaSerialization;
+import org.flink.example.usercase.streaming.application.ad.RecordData;
+import org.flink.example.usercase.streaming.application.ad.RecordDataKafkaSerialization;
 
 import java.util.HashMap;
 import java.util.List;
@@ -90,7 +88,7 @@ public class KafkaConfigUtil {
     public static DataStreamSource<String> buildSource(StreamExecutionEnvironment env, String topic, Long offsetTime) {
         ParameterTool parameter = (ParameterTool) env.getConfig().getGlobalJobParameters();
         Properties props = buildkafkaProps(parameter);
-        FlinkKafkaConsumer011<String> consumer = new FlinkKafkaConsumer011<String>(topic, new SimpleStringSchema(), props);
+        FlinkKafkaConsumer<String> consumer = new FlinkKafkaConsumer<String>(topic, new SimpleStringSchema(), props);
         if (offsetTime != 0L) { //重置offset到time时刻
             Map<KafkaTopicPartition, Long> partitionOffset = buildOffsetByTime(props, parameter, offsetTime);
             consumer.setStartFromSpecificOffsets(partitionOffset);
@@ -107,7 +105,7 @@ public class KafkaConfigUtil {
     public static DataStreamSource<String> buildSource(StreamExecutionEnvironment env, List<String> topicList, Long offsetTime) {
         ParameterTool parameter = (ParameterTool) env.getConfig().getGlobalJobParameters();
         Properties props = buildkafkaProps(parameter);
-        FlinkKafkaConsumer011<String> consumer = new FlinkKafkaConsumer011<String>(topicList, new SimpleStringSchema(), props);
+        FlinkKafkaConsumer<String> consumer = new FlinkKafkaConsumer<String>(topicList, new SimpleStringSchema(), props);
         if (offsetTime != 0L) { //重置offset到time时刻
             for (String topic : topicList) {
                 Map<KafkaTopicPartition, Long> partitionOffset = buildOffsetByTime(props, topic, offsetTime);
@@ -117,12 +115,17 @@ public class KafkaConfigUtil {
         return env.addSource(consumer);
     }
 
-    public static FlinkKafkaProducer011 buildSink(ParameterTool parameterTool) {
+    public static FlinkKafkaProducer buildSink(ParameterTool parameterTool) {
+        return new FlinkKafkaProducer(parameterTool.getRequired(PropertiesConstants.KAFKA_BROKERS_KEY),
+                parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),
+                new SimpleStringSchema());
+    }
+
+    public static FlinkKafkaProducer buildSinkRecordData(ParameterTool parameterTool) {
         Properties producerProps = builderKafkaProducerSideProps(parameterTool);
-        FlinkKafkaProducer011 producer = new FlinkKafkaProducer011<ADBean>("",
-                (KeyedSerializationSchema<ADBean>) new ADKafkaSerialization(),
+        FlinkKafkaProducer producer = new FlinkKafkaProducer<RecordData>("", new RecordDataKafkaSerialization(),
                 producerProps,
-                FlinkKafkaProducer011.Semantic.EXACTLY_ONCE);
+                FlinkKafkaProducer.Semantic.EXACTLY_ONCE);
         producer.setLogFailuresOnly(false);
         return producer;
     }

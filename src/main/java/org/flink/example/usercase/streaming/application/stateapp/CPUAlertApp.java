@@ -22,9 +22,7 @@ public class CPUAlertApp {
         StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);
         DataStreamSource<String> source = KafkaConfigUtil.buildSource(env);
 
-        FlinkKafkaProducer011 kafkaSink = new FlinkKafkaProducer011(parameterTool.getRequired(PropertiesConstants.KAFKA_BROKERS_KEY),
-                parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY),
-                new SimpleStringSchema());
+
 
         DataStream<CPUState> dataStream = source.filter(item -> item.trim().length() >0 ).map(new MapFunction<String, CPUState>() {
             @Override
@@ -47,7 +45,7 @@ public class CPUAlertApp {
 
         dataStream.keyBy("host")
                 .process(new CPUAlertProcessFunction())
-                .addSink(kafkaSink);
+                .addSink(KafkaConfigUtil.buildSink(parameterTool));
 
         env.execute("CPU Used State Test");
     }

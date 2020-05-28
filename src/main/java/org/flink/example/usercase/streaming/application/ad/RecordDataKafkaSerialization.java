@@ -6,10 +6,9 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 
-
-public class ADKafkaSerialization implements KafkaSerializationSchema<ADBean> {
+public class RecordDataKafkaSerialization implements KafkaSerializationSchema<RecordData> {
     @Override
-    public ProducerRecord<byte[], byte[]> serialize(ADBean ad, @Nullable Long aLong) {
-        return new ProducerRecord(ad.getNameService(), ad.getDataJson().getBytes(StandardCharsets.UTF_8));
+    public ProducerRecord<byte[], byte[]> serialize(RecordData ad, @Nullable Long aLong) {
+        return new ProducerRecord(ad.getTopic(), ad.getData().getBytes(StandardCharsets.UTF_8));
     }
 }
