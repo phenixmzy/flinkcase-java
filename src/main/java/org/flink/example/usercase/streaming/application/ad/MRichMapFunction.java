@@ -23,8 +23,8 @@ public class MRichMapFunction extends RichMapFunction<String, RecordData> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MRichMapFunction.class);
     private String[] serviceNames;
 
-    private HashMap<String, ConfigValue> configValues = new HashMap<String, ConfigValue>();
-    private HashMap<String, ArrayList<String>> fields = new HashMap<String, ArrayList<String>>();
+    private HashMap<String, ConfigValue> appConfigs = new HashMap<String, ConfigValue>();
+    private HashMap<String, ArrayList<String>> tableFields = new HashMap<String, ArrayList<String>>();
 
     public MRichMapFunction(String[] serviceNames) {
         this.serviceNames = serviceNames;
@@ -52,10 +52,19 @@ public class MRichMapFunction extends RichMapFunction<String, RecordData> {
     }
 
     private void reload() {
-        configValues.putAll(ConfigCenterManager.getConfigValues());
-        Set<String> keySet = configValues.keySet();
-        for (String key : keySet) {
-            fields.put(key, getConfigFields(configValues.get(key).getFields()));
+
+        for (String ns : serviceNames) {
+            String[] configs = ConfigCenterManager.getConfigValues(ns).split(",");
+            for(String configKey : configs) {
+                String table = ConfigCenterManager.getConfigValues(configKey+".table");
+                String fields = ConfigCenterManager.getConfigValues(configKey+".fields");
+                String sinkTopic = ConfigCenterManager.getConfigValues(configKey+".kafka.sink.topic");
+                ConfigValue cv = new ConfigValue(table);
+                cv.putConfigs("kafka.sink.topic", sinkTopic);
+                cv.putConfigs("table.fields",fields);
+                appConfigs.put(table, cv);
+                tableFields.put(table,getConfigFields(fields));
+            }
         }
     }
 
@@ -69,8 +78,9 @@ public class MRichMapFunction extends RichMapFunction<String, RecordData> {
     @Override
     public RecordData map(String eventJsonStr) throws Exception {
         JSONObject json = JSONObject.parseObject(eventJsonStr);
-        String fieldsKey = json.getString(PropertiesConstants.CANAL_JSON_DATA_TABLE_KEY);
-        return getRecordData(json, fieldsKey);
+        String table = json.getString(PropertiesConstants.CANAL_JSON_DATA_TABLE_KEY);
+        String sinkTopic = appConfigs.get(table).getConfig("kafka.sink.topic");
+        return getRecordData(table, sinkTopic, json);
     }
 
     private ArrayList<String> getConfigFields(String config_fields) {
@@ -82,9 +92,9 @@ public class MRichMapFunction extends RichMapFunction<String, RecordData> {
         return fieldList;
     }
 
-    private RecordData getRecordData(JSONObject json, String fieldsKey) {
+    private RecordData getRecordData(String fieldsKey, String topic, JSONObject json) {
         StringBuilder builder = new StringBuilder();
-        ArrayList<String> fieldList = fields.get(fieldsKey);
+        ArrayList<String> fieldList = tableFields.get(fieldsKey);
         for (String field : fieldList) {
             Object value = json.get(field);
             if (value == null) {
@@ -95,7 +105,7 @@ public class MRichMapFunction extends RichMapFunction<String, RecordData> {
         }
 
         String outputData =  builder.length() > 0 ? builder.substring(0, builder.length() - ConfigCenterManager.SPLIT_FLAG.length()) : "";
-        RecordData rd = new RecordData(fieldsKey, outputData);
+        RecordData rd = new RecordData(topic, outputData);
         return rd;
     }
 }
