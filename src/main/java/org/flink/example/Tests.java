@@ -29,7 +29,9 @@ public class Tests {
         LocalDateTime dt2 = LocalDateTime.parse("2019/11/30 15:16:17", dtf);
         System.out.println(dt2.plusDays(5).minusHours(5).withHour(3));
        */
-        String nameservices = "canal.cl.ad,canal.cl.app";
+        String ss = "dfaf adfa ";
+        System.out.println(ss.replace(" ", ""));
+        String nameservices = "canal.chuangliang_ad.toutiao_campaign_info";
         String[] serviceNames = nameservices.split(",");
         ConfigCenterManager.init();
         for (String ns : serviceNames) {
@@ -54,7 +56,6 @@ public class Tests {
                 String sinkTopic = appConfigs.get(table).getConfig("kafka.sink.topic");
 ;                System.out.println(table + " " + sinkTopic);
             }
-
         } catch (Exception ex) {
 
         } finally {

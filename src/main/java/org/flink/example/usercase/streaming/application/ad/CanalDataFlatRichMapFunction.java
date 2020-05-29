@@ -75,7 +75,8 @@ public class CanalDataFlatRichMapFunction extends RichFlatMapFunction<String, Re
         ArrayList<String> fieldList = new ArrayList<String>();
         String[] fields = config_fields.split(",");
         for (String field : fields) {
-            fieldList.add(field);
+            String tableField = field.replace(" ", "");
+            fieldList.add(tableField);
         }
         return fieldList;
     }
@@ -104,18 +105,20 @@ public class CanalDataFlatRichMapFunction extends RichFlatMapFunction<String, Re
         String table = json.getString(PropertiesConstants.CANAL_JSON_DATA_TABLE_KEY);
         for(String k : appConfigs.keySet()) {
             ConfigValue cv = appConfigs.get(k);
-            LOGGER.info("appConfigs ac_key:{}",k);
+            LOGGER.info("ConfigCenter appConfigs ac_key:{}",k);
             for (String kk : cv.getConfigs().keySet())
-                LOGGER.info("appConfigs ac_key:{}, attrs[{}:{}]", k,kk,cv.getConfig(kk));
+                LOGGER.info("ConfigCenter appConfigs ac_key:{}, attrs[{}:{}]", k,kk,cv.getConfig(kk));
         }
-        LOGGER.info("table:{},", table);
-        String sinkTopic = appConfigs.get(table).getConfig("kafka.sink.topic");
-        JSONArray datasJson = json.getJSONArray("data");
-
-        for (int i =0, size = datasJson.size(); i < size; i++) {
-            JSONObject dataJson = datasJson.getJSONObject(i);
-            collector.collect(getRecordData(table, sinkTopic, dataJson));
+        LOGGER.info("Stream data of table:{},", table);
+        if (appConfigs.containsKey(table)) {
+            String sinkTopic = appConfigs.get(table).getConfig("kafka.sink.topic");
+            JSONArray datasJson = json.getJSONArray("data");
+            for (int i =0, size = datasJson.size(); i < size; i++) {
+                JSONObject dataJson = datasJson.getJSONObject(i);
+                collector.collect(getRecordData(table, sinkTopic, dataJson));
+                LOGGER.info("collector table:{}, sinkTopic:{}", table, sinkTopic);
+            }
+            LOGGER.info("collector table:{}, sinkTopic:{}, recordCount:{}", table, sinkTopic, datasJson.size());
         }
-
     }
 }
