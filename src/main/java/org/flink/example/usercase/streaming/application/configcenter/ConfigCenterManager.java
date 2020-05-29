@@ -11,10 +11,6 @@ public class ConfigCenterManager {
 
     public static HashMap<String, String> CONFIG_VALUES = new HashMap<String, String>();
 
-    static {
-        init();
-    }
-
     public static void init() {
         CONFIG_VALUES.put("canal.cl.ad","canal.cl.ad.table,canal.cl.ad.fields,canal.cl.ad.kafka.sink.topic");
         CONFIG_VALUES.put("canal.cl.ad.table","ad");

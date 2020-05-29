@@ -29,7 +29,7 @@ public class KafkaConfigUtil {
 
     public static Properties builderKafkaProducerSideProps(ParameterTool parameterTool) {
         Properties props = parameterTool.getProperties();
-        props.put("bootstrap.servers", parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_BROKERS_KEY));
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_BROKERS_KEY));
         props.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, "120000");
         props.put(ProducerConfig.BATCH_SIZE_CONFIG, "200000");
         props.put(ProducerConfig.LINGER_MS_CONFIG, "100");
@@ -38,12 +38,17 @@ public class KafkaConfigUtil {
         props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "134217728");
         props.put(ProducerConfig.SEND_BUFFER_CONFIG, "134217728");
         props.put(ProducerConfig.BUFFER_MEMORY_CONFIG, "134217728");
+        //  kafka producer 在使用EXACTLY_ONCE的时候需要增加一些配置
+        props.put(ProducerConfig.TRANSACTION_TIMEOUT_CONFIG, parameterTool.get(ProducerConfig.TRANSACTION_TIMEOUT_CONFIG, String.valueOf(1000 * 60 *3)));
+        props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1");
+        props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+
         return props;
     }
 
     public static Properties builderKafkaConsumerSideProps(ParameterTool parameterTool) {
         Properties props = parameterTool.getProperties();
-        props.put("bootstrap.servers", parameterTool.getRequired(PropertiesConstants.KAFKA_SOURCE_BROKERS_KEY));
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, parameterTool.getRequired(PropertiesConstants.KAFKA_SOURCE_BROKERS_KEY));
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "60000");
         props.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, "524288000");
         props.put(ConsumerConfig.FETCH_MIN_BYTES_CONFIG, "100000");

@@ -17,10 +17,10 @@ public class CanalDataStreamingApplication {
         final ParameterTool parameterTool = ExecutionEnvUtil.createParameterTool(args);
         StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);
         String nameServices = parameterTool.getRequired(PropertiesConstants.NAME_SERVICES_KEY);
-
+        LOGGER.info("nameService:{}",nameServices);
         DataStreamSource<String> source = KafkaConfigUtil.buildSource(env);
 
-        source.map(new MRichMapFunction(nameServices.split(",")))
+        source.flatMap(new CanalDataFlatRichMapFunction(nameServices.split(",")))
                 .addSink(KafkaConfigUtil.buildSinkRecordData(parameterTool));
 
         env.execute("Streaming name service of config center to kafka");
