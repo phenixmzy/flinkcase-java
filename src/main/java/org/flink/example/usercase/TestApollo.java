@@ -1,0 +1,31 @@
+package org.flink.example.usercase;
+
+import com.ctrip.framework.apollo.Config;
+import com.ctrip.framework.apollo.ConfigChangeListener;
+import com.ctrip.framework.apollo.ConfigService;
+import com.ctrip.framework.apollo.model.ConfigChange;
+import com.ctrip.framework.apollo.model.ConfigChangeEvent;
+
+import java.util.Set;
+
+public class TestApollo {
+
+    public static void main(String[] args) {
+        System.setProperty("APOLLO_META", "http://192.168.230.144:8070");
+        Config config = ConfigService.getConfig("collect.canal.cl_ad");
+        Set<String> names = config.getPropertyNames();
+        for (String name: names) {
+            System.out.println(name);
+        }
+
+        config.addChangeListener(new ConfigChangeListener() {
+            @Override
+            public void onChange(ConfigChangeEvent configChangeEvent) {
+                for (String key : configChangeEvent.changedKeys()) {
+                    ConfigChange change = configChangeEvent.getChange(key);
+                    System.out.println(key + ":" +change.getNewValue());
+                }
+            }
+        });
+    }
+}
