@@ -4,6 +4,8 @@ public class PropertiesConstants {
     // apollo
     public static final String NAME_SERVICES_KEY = "name.services";
 
+    public static final String FILE_JSON_DATA_TABLE_KEY = "doc_name";
+
     // canal
     public static final String CANAL_JSON_DATA_DATABASE_KEY = "database";
     public static final String CANAL_JSON_DATA_TABLE_KEY = "table";

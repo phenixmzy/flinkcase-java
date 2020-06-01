@@ -1,6 +1,8 @@
 package org.flink.example.usercase.streaming.application.configcenter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 public class FileConfigCenterManager {
     public final static String NULL_STR = "NULL";
@@ -9,80 +11,58 @@ public class FileConfigCenterManager {
     public static HashMap<String, String> CONFIG_VALUES = new HashMap<String, String>();
 
     public static void init() {
-        CONFIG_VALUES.put("file.chuangliang_ad.admin_user", "file.chuangliang_ad.admin_user.doc_type,file.chuangliang_ad.admin_user.fields,file.chuangliang_ad.admin_user.kafka.sink.topic,file.chuangliang_ad.admin_user.kafka.source.topic");
-        CONFIG_VALUES.put("file.chuangliang_ad.admin_user.doc_type", "admin_user");
-        CONFIG_VALUES.put("file.chuangliang_ad.admin_user.fields", "user_id,project_id,group_id,email,user_name,password,mobile,note,is_lock,parent_id,create_time,create_user_id,update_time,update_user_id,gray_permissions,data_range,is_delete");
-        CONFIG_VALUES.put("file.chuangliang_ad.admin_user.kafka.sink.topic", "admin_user-sink");
-        CONFIG_VALUES.put("file.chuangliang_ad.admin_user.kafka.source.topic", "admin_user-source");
+        CONFIG_VALUES.put("file.cl_ad.toutiao_advertiser_report_data", "file.cl_ad.toutiao_advertiser_report_data.doc_name,file.cl_ad.toutiao_advertiser_report_data.fields,file.cl_ad.toutiao_advertiser_report_data.kafka.sink.topic,file.cl_ad.toutiao_advertiser_report_data.kafka.source.topic");
+        CONFIG_VALUES.put("file.cl_ad.toutiao_advertiser_report_data.doc_name", "toutiao_advertiser_report_data");
+        CONFIG_VALUES.put("file.cl_ad.toutiao_advertiser_report_data.fields", "advertiser_id,stat_time,months,days,hours,cost,show_count,avg_show_cost,click,avg_click_cost,ctr,convert_count,convert_cost,convert_rate,deep_convert,deep_convert_cost,deep_convert_rate,attribution_convert,attribution_convert_cost,attribution_deep_convert,attribution_deep_convert_cost,download_start,download_start_cost,download_start_rate,download_finish,download_finish_cost,download_finish_rate,click_install,install_finish,install_finish_cost,install_finish_rate,active,active_cost,active_rate,register,active_register_cost,active_register_rate,next_day_open,next_day_open_cost,next_day_open_rate,attribution_next_day_open_cnt,attribution_next_day_open_cost,attribution_next_day_open_rate,game_addiction,game_addiction_cost,game_addiction_rate,pay_count,active_pay_cost,active_pay_rate,loan_completion,loan_completion_cost,loan_completion_rate,pre_loan_credit,pre_loan_credit_cost,loan_credit,loan_credit_cost,loan_credit_rate,in_app_uv,in_app_detail_uv,in_app_cart,in_app_pay,in_app_order,phone,form,map_search,button,view_count,download,qq,lottery,vote,message,redirect,shopping,consult,wechat,phone_confirm,phone_connect,consult_effective,coupon,coupon_single_page,total_play,valid_play,valid_play_cost,valid_play_rate,play_25_feed_break,play_50_feed_break,play_75_feed_break,play_100_feed_break,average_play_time_per_play,play_over_rate,wifi_play_rate,wifi_play,play_duration_sum,advanced_creative_phone_click,advanced_creative_counsel_click,advanced_creative_form_click,advanced_creative_coupon_addition,share,comment,like_count,follow,home_visited,ies_challenge_click,ies_music_click,location_click");
+        CONFIG_VALUES.put("file.cl_ad.toutiao_advertiser_report_data.kafka.sink.topic", "toutiao-advertiser-report-data-sink");
+        CONFIG_VALUES.put("file.cl_ad.toutiao_advertiser_report_data.kafka.source.topic", "toutiao-advertiser-report-data-source");
 
-        CONFIG_VALUES.put("file.chuangliang_ad.media_account", "file.chuangliang_ad.media_account.doc_type,file.chuangliang_ad.media_account.fields,file.chuangliang_ad.media_account.kafka.sink.topic,file.chuangliang_ad.media_account.kafka.source.topic");
-        CONFIG_VALUES.put("file.chuangliang_ad.media_account.doc_type", "media_account");
-        CONFIG_VALUES.put("file.chuangliang_ad.media_account.fields", "media_account_id,parent_id,owner_user_id,media_type,media_agent_id,advertiser_type,advertiser_id,advertiser_name,advertiser_nick,advertiser_source,advertiser_status,develop_app_key,develop_app_secret,access_token,access_token_time,access_token_expires,access_token_retry_times,refresh_token,refresh_token_expires,company,note,create_time,create_user_id,update_time,update_user_id,is_delete,balance,today_cost,yesterday_cost");
-        CONFIG_VALUES.put("file.chuangliang_ad.media_account.kafka.sink.topic", "media_account-sink");
-        CONFIG_VALUES.put("file.chuangliang_ad.media_account.kafka.source.topic", "media_account-source");
-
-        CONFIG_VALUES.put("file.chuangliang_ad.media_agent", "file.chuangliang_ad.media_agent.doc_type,file.chuangliang_ad.media_agent.fields,file.chuangliang_ad.media_agent.kafka.sink.topic,file.chuangliang_ad.media_agent.kafka.source.topic");
-        CONFIG_VALUES.put("file.chuangliang_ad.media_agent.doc_type", "media_agent");
-        CONFIG_VALUES.put("file.chuangliang_ad.media_agent.fields", "media_agent_id,agent_name,agent_company,agent_status,media_type,rebate,note,create_time,owner_user_id,create_user_id,update_time,update_user_id,is_delete");
-        CONFIG_VALUES.put("file.chuangliang_ad.media_agent.kafka.sink.topic", "media_agent-sink");
-        CONFIG_VALUES.put("file.chuangliang_ad.media_agent.kafka.source.topic", "media_agent-source");
-
-        CONFIG_VALUES.put("file.chuangliang_ad.admin_project", "file.chuangliang_ad.admin_project.doc_type,file.chuangliang_ad.admin_project.fields,file.chuangliang_ad.admin_project.kafka.sink.topic,file.chuangliang_ad.admin_project.kafka.source.topic");
-        CONFIG_VALUES.put("file.chuangliang_ad.admin_project.doc_type", "admin_project");
-        CONFIG_VALUES.put("file.chuangliang_ad.admin_project.fields", "project_id,project_name,owner_user_id,note,create_time,create_user_id,update_time,update_user_id,is_delete");
-        CONFIG_VALUES.put("file.chuangliang_ad.admin_project.kafka.sink.topic", "admin_project-sink");
-        CONFIG_VALUES.put("file.chuangliang_ad.admin_project.kafka.source.topic", "admin_project-source");
-
-        CONFIG_VALUES.put("file.chuangliang_ad.app", "file.chuangliang_ad.app.doc_type,file.chuangliang_ad.app.fields,file.chuangliang_ad.app.kafka.sink.topic,file.chuangliang_ad.app.kafka.source.topic");
-        CONFIG_VALUES.put("file.chuangliang_ad.app.doc_type", "app");
-        CONFIG_VALUES.put("file.chuangliang_ad.app.fields", "app_id,app_group_id,app_name,app_key,owner_user_id,package_name,appstore_id,appstore_url,platform,icon_uri,is_active,cost_target_config,create_time,create_user_id ,update_time,update_user_id,is_delete");
-        CONFIG_VALUES.put("file.chuangliang_ad.app.kafka.sink.topic", "app-sink");
-        CONFIG_VALUES.put("file.chuangliang_ad.app.kafka.source.topic", "app-source");
-
-        CONFIG_VALUES.put("file.chuangliang_ad.material", "file.chuangliang_ad.material.doc_type,file.chuangliang_ad.material.fields,file.chuangliang_ad.material.kafka.sink.topic,file.chuangliang_ad.material.kafka.source.topic");
-        CONFIG_VALUES.put("file.chuangliang_ad.material.doc_type", "material");
-        CONFIG_VALUES.put("file.chuangliang_ad.material.fields", "material_id,special_id,copy_material_id,group_id,material_name,material_type,height,width,aspect_ratio,video_duration,thumbnail_uri,file_uri,file_siz,file_direction,file_md5,extra_info,creative_user,make_user,note,owner_user_id,create_time,create_user_id,update_time,update_user_id,is_delete");
-        CONFIG_VALUES.put("file.chuangliang_ad.material.kafka.sink.topic", "material-sink");
-        CONFIG_VALUES.put("file.chuangliang_ad.material.kafka.source.topic", "material-source");
-
-        CONFIG_VALUES.put("file.chuangliang_ad.material_group", "file.chuangliang_ad.material_group.doc_type,file.chuangliang_ad.material_group.fields,file.chuangliang_ad.material_group.kafka.sink.topic,file.chuangliang_ad.material_group.kafka.source.topic");
-        CONFIG_VALUES.put("file.chuangliang_ad.material_group.doc_type", "material_group");
-        CONFIG_VALUES.put("file.chuangliang_ad.material_group.fields", "group_id,group_name,special_id,note,create_time,create_user_id,update_time,update_user_id,is_delete");
-        CONFIG_VALUES.put("file.chuangliang_ad.material_group.kafka.sink.topic", "material_group-sink");
-        CONFIG_VALUES.put("file.chuangliang_ad.material_group.kafka.source.topic", "material_group-source");
-
-        CONFIG_VALUES.put("file.chuangliang_ad.material_special", "file.chuangliang_ad.material_special.doc_type,file.chuangliang_ad.material_special.fields,file.chuangliang_ad.material_special.kafka.sink.topic,file.chuangliang_ad.material_special.kafka.source.topic");
-        CONFIG_VALUES.put("file.chuangliang_ad.material_special.doc_type", "material_special");
-        CONFIG_VALUES.put("file.chuangliang_ad.material_special.fields", "special_id,special_name,note,owner_user_id,is_open_permission,create_time,create_user_id,update_time,update_user_id,is_delete");
-        CONFIG_VALUES.put("file.chuangliang_ad.material_special.kafka.sink.topic", "material_special-sink");
-        CONFIG_VALUES.put("file.chuangliang_ad.material_special.kafka.source.topic", "material_special-source");
-
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_campaign_info", "file.chuangliang_ad.toutiao_campaign_info.doc_type,file.chuangliang_ad.toutiao_campaign_info.fields,file.chuangliang_ad.toutiao_campaign_info.kafka.sink.topic,file.chuangliang_ad.toutiao_campaign_info.kafka.source.topic");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_campaign_info.doc_type", "toutiao_campaign_info");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_campaign_info.fields", "id,campaign_id,advertiser_id,name,status,budget_mode,landing_type,budget,campaign_create_time,campaign_modify_time,unique_fk,is_locate_create,create_time,update_time");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_campaign_info.kafka.sink.topic", "toutiao_campaign_info-sink");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_campaign_info.kafka.source.topic", "toutiao_campaign_info-source");
-
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_ad_info", "file.chuangliang_ad.toutiao_ad_info.doc_type,file.chuangliang_ad.toutiao_ad_info.fields,file.chuangliang_ad.toutiao_ad_info.kafka.sink.topic,file.chuangliang_ad.toutiao_ad_info.kafka.source.topic");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_ad_info.doc_type", "toutiao_ad_info");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_ad_info.fields", "id,advertiser_id,ad_id,campaign_id,inventory_type,delivery_range,status,opt_status,name,budget_mode,budget,start_time,end_time,bid,pricing,schedule_type,schedule_time,flow_control_mode,open_url,download_type,download_url,external_url,app_type,union_video_type,package,hide_if_exists,hide_if_converted,cpa_bid,audience,convert_id,deep_bid_type,deep_cpabid,roi_goal,smart_bid_type,adjust_cpa,is_local_create,download_mode,learning_phase,cl_app_id,activity_id,group_id,ad_create_time,ad_modify_time,create_time,update_time");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_ad_info.kafka.sink.topic", "toutiao_ad_info-sink");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_ad_info.kafka.source.topic", "toutiao_ad_info-source");
-
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_inventory_info", "file.chuangliang_ad.toutiao_inventory_info.doc_type,file.chuangliang_ad.toutiao_inventory_info.fields,file.chuangliang_ad.toutiao_inventory_info.kafka.sink.topic,file.chuangliang_ad.toutiao_inventory_info.kafka.source.topic");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_inventory_info.doc_type", "toutiao_inventory_info");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_inventory_info.fields", "inventory_key,inventory_name");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_inventory_info.kafka.sink.topic", "toutiao_inventory_info-sink");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_inventory_info.kafka.source.topic", "toutiao_inventory_info-source");
-
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_material_info", "file.chuangliang_ad.toutiao_material_info.doc_type,file.chuangliang_ad.toutiao_material_info.fields,file.chuangliang_ad.toutiao_material_info.kafka.sink.topic,file.chuangliang_ad.toutiao_material_info.kafka.source.topic");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_material_info.doc_type", "toutiao_material_info");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_material_info.fields", "id,advertiser_id,touttiao_material_str_id,toutiao_material_id,material_type,signature,size,width,height,format,bit_rate,duration,source,update_time");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_material_info.kafka.sink.topic", "toutiao_material_info-sink");
-        CONFIG_VALUES.put("file.chuangliang_ad.toutiao_material_info.kafka.source.topic", "toutiao_material_info-source");
+        CONFIG_VALUES.put("file.cl_ad.toutiao_material_report", "file.cl_ad.toutiao_material_report.doc_name,file.cl_ad.toutiao_material_report.fields,file.cl_ad.toutiao_material_report.kafka.sink.topic,file.cl_ad.toutiao_material_report.kafka.source.topic");
+        CONFIG_VALUES.put("file.cl_ad.toutiao_material_report.doc_name", "toutiao_material_report");
+        CONFIG_VALUES.put("file.cl_ad.toutiao_material_report.fields", "advertiser_id,ad_id,material_id,inventory,stat_datetime,months,daysdate,campaign_id,cost,show_count,avg_show_cost,click,avg_click_cost,ctr,convert_count,convert_cost,convert_rate,deep_convert,deep_convert_cost,deep_convert_rate,attribution_convert,attribution_convert_cost,attribution_deep_convert,attribution_deep_convert_cost,download_start,download_start_cost,download_start_rate,download_finish,download_finish_cost,download_finish_rate,click_install,install_finish,install_finish_cost,install_finish_rate,active,active_cost,active_rat,register,active_register_cost   ,active_register_rate   ,next_day_open,next_day_open_cost,next_day_open_rate,attribution_next_day_open_cnt,attribution_next_day_open_cost,attribution_next_day_open_rate ,game_addiction ,game_addiction_cost,game_addiction_rate,pay_count,active_pay_cost,active_pay_rate,loan_completion,loan_completion_cost,loan_completion_rate,pre_loan_credit,pre_loan_credit_cost,loan_credit,loan_credit_cost  ,loan_credit_rate,in_app_uv,in_app_detail_uv,in_app_cart,in_app_pay,in_app_order,phone,form,map_search,button,view_count,download,qq,lottery,vote,message,redirect,shopping,consult,wechat,phone_confirm,phone_connect,consult_effective,coupon,coupon_single_page,total_play,valid_play,valid_play_cost,valid_play_rate,play_25_feed_break,play_50_feed_break,play_75_feed_break,play_100_feed_break,average_play_time_per_play,play_over_rate,wifi_play_rate,wifi_play ,play_duration_sum,advanced_creative_phone_click,advanced_creative_counsel_click,advanced_creative_form_click,advanced_creative_coupon_addition,share,comment,like_count,follow,home_visited,ies_challenge_click,ies_music_click,location_click");
+        CONFIG_VALUES.put("file.cl_ad.toutiao_material_report.kafka.sink.topic", "toutiao-material-report-sink");
+        CONFIG_VALUES.put("file.cl_ad.toutiao_material_report.kafka.source.topic", "toutiao-material-report-source");
     }
 
     public static String getConfigValues(String key) {
         return CONFIG_VALUES.get(key);
+    }
+
+    public static HashMap<String, ConfigValue> getConfigValueByNameSpaces(String[] nameServices) {
+        HashMap<String, ConfigValue> appConfigs = new HashMap<String, ConfigValue>();
+        for (String ns : nameServices) {
+            String docName = FileConfigCenterManager.getConfigValues(ns + ".doc_name");
+            String sourceTopic = FileConfigCenterManager.getConfigValues(ns + ".kafka.source.topic");
+            String sinkTopic = FileConfigCenterManager.getConfigValues(ns + ".kafka.sink.topic");
+            String fields = FileConfigCenterManager.getConfigValues(ns + ".fields");
+            ConfigValue cv = new ConfigValue(docName);
+            cv.putConfigs("kafka.source.topic", sourceTopic);
+            cv.putConfigs("kafka.sink.topic", sinkTopic);
+            cv.putConfigs("fields", fields);
+            appConfigs.put(docName, cv);
+        }
+        return appConfigs;
+    }
+
+    public static HashMap<String, ArrayList<String>> getDocNameFiledsByNameSpaces(String[] nameServices) {
+        HashMap<String, ArrayList<String>> docNamefields = new HashMap<String, ArrayList<String>>();
+        HashMap<String, ConfigValue> appConfigs = getConfigValueByNameSpaces(nameServices);
+        Set<String> docNames = appConfigs.keySet();
+        for (String docName : docNames) {
+            ConfigValue cv = appConfigs.get(docName);
+            String fields = cv.getConfig("fields");
+            docNamefields.put(docName, getConfigFields(fields));
+        }
+        return docNamefields;
+    }
+
+    private static ArrayList<String> getConfigFields(String config_fields) {
+        ArrayList<String> fieldList = new ArrayList<String>();
+        String[] fields = config_fields.split(",");
+        for (String field : fields) {
+            String tableField = field.replace(" ", "");
+            fieldList.add(tableField);
+        }
+        return fieldList;
     }
 }

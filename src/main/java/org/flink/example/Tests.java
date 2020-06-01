@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.flink.example.common.constant.PropertiesConstants;
 import org.flink.example.usercase.streaming.application.configcenter.ConfigCenterManager;
 import org.flink.example.usercase.streaming.application.configcenter.ConfigValue;
+import org.flink.example.usercase.streaming.application.configcenter.FileConfigCenterManager;
 
 import java.io.*;
 import java.time.Instant;
@@ -29,8 +30,19 @@ public class Tests {
         LocalDateTime dt2 = LocalDateTime.parse("2019/11/30 15:16:17", dtf);
         System.out.println(dt2.plusDays(5).minusHours(5).withHour(3));
        */
-        String ss = "dfaf adfa ";
-        System.out.println(ss.replace(" ", ""));
+        testLoad();
+    }
+
+    private static ArrayList<String> getConfigFields(String config_fields) {
+        ArrayList<String> fieldList = new ArrayList<String>();
+        String[] fields = config_fields.split(",");
+        for (String field : fields) {
+            fieldList.add(field);
+        }
+        return fieldList;
+    }
+
+    private static void testConfig() {
         String nameservices = "canal.chuangliang_ad.toutiao_campaign_info";
         String[] serviceNames = nameservices.split(",");
         ConfigCenterManager.init();
@@ -54,7 +66,7 @@ public class Tests {
                 JSONObject json = JSONObject.parseObject(eventJsonStr);
                 String table = json.getString(PropertiesConstants.CANAL_JSON_DATA_TABLE_KEY);
                 String sinkTopic = appConfigs.get(table).getConfig("kafka.sink.topic");
-;                System.out.println(table + " " + sinkTopic);
+                ;                System.out.println(table + " " + sinkTopic);
             }
         } catch (Exception ex) {
 
@@ -69,13 +81,20 @@ public class Tests {
         }
     }
 
-    private static ArrayList<String> getConfigFields(String config_fields) {
-        ArrayList<String> fieldList = new ArrayList<String>();
-        String[] fields = config_fields.split(",");
-        for (String field : fields) {
-            fieldList.add(field);
+    private static void testLoad() {
+        String[] serviceNames = {"",""};
+        FileConfigCenterManager.init();
+        for (String ns : serviceNames) {
+            String docName = FileConfigCenterManager.getConfigValues(ns + ".doc_name");
+            String sourceTopic = FileConfigCenterManager.getConfigValues(ns + ".kafka.source.topic");
+            String sinkTopic = FileConfigCenterManager.getConfigValues(ns + ".kafka.sink.topic");
+            String fields = FileConfigCenterManager.getConfigValues(ns + ".fields");
+            ConfigValue cv = new ConfigValue(docName);
+            cv.putConfigs("kafka.source.topic", sourceTopic);
+            cv.putConfigs("kafka.sink.topic", sinkTopic);
+            cv.putConfigs("fields", fields);
+            appConfigs.put(docName, cv);
+            tableFields.put(docName, getConfigFields(fields));
         }
-        return fieldList;
     }
-
 }

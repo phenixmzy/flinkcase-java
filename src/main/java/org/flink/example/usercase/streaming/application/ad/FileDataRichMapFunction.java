@@ -1,11 +1,12 @@
 package org.flink.example.usercase.streaming.application.ad;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.flink.api.common.functions.RichMapFunction;
+import org.apache.flink.configuration.Configuration;
 import org.flink.example.common.constant.PropertiesConstants;
 import org.flink.example.usercase.streaming.application.configcenter.ConfigCenterManager;
 import org.flink.example.usercase.streaming.application.configcenter.ConfigValue;
+import org.flink.example.usercase.streaming.application.configcenter.FileConfigCenterManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +14,13 @@ import java.util.HashMap;
 public class FileDataRichMapFunction extends RichMapFunction<String, RecordData> {
     private String[] serviceNames;
     private HashMap<String, ConfigValue> appConfigs = new HashMap<String, ConfigValue>();
-    private HashMap<String, ArrayList<String>> tableFields = new HashMap<String, ArrayList<String>>();
+    private HashMap<String, ArrayList<String>> docNameFields = new HashMap<String, ArrayList<String>>();
+
+    @Override
+    public void open(Configuration parameters) throws Exception{
+        super.open(parameters);
+        load();
+    }
 
     @Override
     public RecordData map(String eventJsonStr) throws Exception {
@@ -32,19 +39,15 @@ public class FileDataRichMapFunction extends RichMapFunction<String, RecordData>
 
     }
 
-    private ArrayList<String> getConfigFields(String config_fields) {
-        ArrayList<String> fieldList = new ArrayList<String>();
-        String[] fields = config_fields.split(",");
-        for (String field : fields) {
-            String tableField = field.replace(" ", "");
-            fieldList.add(tableField);
-        }
-        return fieldList;
+    private void load() {
+        FileConfigCenterManager.init();
+        appConfigs.putAll(FileConfigCenterManager.getConfigValueByNameSpaces(this.serviceNames));
+        docNameFields.putAll(FileConfigCenterManager.getDocNameFiledsByNameSpaces(this.serviceNames));
     }
 
     private RecordData getRecordData(String fieldsKey, String topic, JSONObject json) {
         StringBuilder builder = new StringBuilder();
-        ArrayList<String> fieldList = tableFields.get(fieldsKey);
+        ArrayList<String> fieldList = docNameFields.get(fieldsKey);
         for (String field : fieldList) {
             Object value = json.get(field);
             if (value == null) {
