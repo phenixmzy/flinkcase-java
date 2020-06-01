@@ -1,9 +1,6 @@
 package org.flink.example.usercase.streaming.application.ad;
 
-import org.flink.example.usercase.streaming.application.configcenter.ConfigValue;
 import org.flink.example.usercase.streaming.application.configcenter.RecordDataConfigValue;
-
-import java.util.HashMap;
 
 public class FileConfigurationService extends ConfigurationService{
 
