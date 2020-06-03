@@ -12,6 +12,11 @@ public class ConfigCenterManager {
     public static HashMap<String, String> CONFIG_VALUES = new HashMap<String, String>();
 
     public static void init() {
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_advertiser_daily_fund", "canal.chuangliang_ad.toutiao_advertiser_daily_fund.table,canal.chuangliang_ad.toutiao_advertiser_daily_fund.fields,canal.chuangliang_ad.toutiao_advertiser_daily_fund.kafka.sink.topic");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_advertiser_daily_fund.table", "toutiao_advertiser_daily_fund");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_advertiser_daily_fund.fields", "id,advertiser_id,days,balance,cash_cost,cost,frozen,income,reward_cost,return_goods_cost,transfer_in,transfer_out,create_time,update_time");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_advertiser_daily_fund.kafka.sink.topic", "toutiao_advertiser_daily_fund-sink");
+
         CONFIG_VALUES.put("canal.chuangliang_ad.admin_user", "canal.chuangliang_ad.admin_user.table,canal.chuangliang_ad.admin_user.fields,canal.chuangliang_ad.admin_user.kafka.sink.topic");
         CONFIG_VALUES.put("canal.chuangliang_ad.admin_user.table", "admin_user");
         CONFIG_VALUES.put("canal.chuangliang_ad.admin_user.fields", "user_id,project_id,group_id,email,user_name,password,mobile,note,is_lock,parent_id,create_time,create_user_id,update_time,update_user_id,gray_permissions,data_range,is_delete");
