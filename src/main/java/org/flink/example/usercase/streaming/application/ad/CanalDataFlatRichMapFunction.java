@@ -103,21 +103,31 @@ public class CanalDataFlatRichMapFunction extends RichFlatMapFunction<String, Re
         LOGGER.info(eventJsonStr);
         JSONObject json = JSONObject.parseObject(eventJsonStr);
         String table = json.getString(PropertiesConstants.CANAL_JSON_DATA_TABLE_KEY);
-        for(String k : appConfigs.keySet()) {
+        /*for(String k : appConfigs.keySet()) {
             ConfigValue cv = appConfigs.get(k);
             LOGGER.info("ConfigCenter appConfigs ac_key:{}",k);
             for (String kk : cv.getConfigs().keySet())
                 LOGGER.info("ConfigCenter appConfigs ac_key:{}, attrs[{}:{}]", k,kk,cv.getConfig(kk));
         }
         LOGGER.info("Stream data of table:{},", table);
+        */
         if (appConfigs.containsKey(table)) {
             String sinkTopic = appConfigs.get(table).getConfig("kafka.sink.topic");
             JSONArray datasJson = json.getJSONArray("data");
-            for (int i =0, size = datasJson.size(); i < size; i++) {
-                JSONObject dataJson = datasJson.getJSONObject(i);
-                collector.collect(getRecordData(table, sinkTopic, dataJson));
-                LOGGER.info("collector table:{}, sinkTopic:{}", table, sinkTopic);
+            if (datasJson == null) {
+                LOGGER.warn("warn data, the data is null.: {}" , eventJsonStr);
+                return;
             }
+            try {
+                for (int i =0, size = datasJson.size(); i < size; i++) {
+                    JSONObject dataJson = datasJson.getJSONObject(i);
+                    collector.collect(getRecordData(table, sinkTopic, dataJson));
+                    LOGGER.info("collector table:{}, sinkTopic:{}", table, sinkTopic);
+                }
+            } catch (Exception e) {
+                LOGGER.error("error data: {}" , eventJsonStr);
+            }
+
             LOGGER.info("collector table:{}, sinkTopic:{}, recordCount:{}", table, sinkTopic, datasJson.size());
         }
     }
