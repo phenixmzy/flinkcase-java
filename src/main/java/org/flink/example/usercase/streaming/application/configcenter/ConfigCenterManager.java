@@ -12,6 +12,16 @@ public class ConfigCenterManager {
     public static HashMap<String, String> CONFIG_VALUES = new HashMap<String, String>();
 
     public static void init() {
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_ad_keywords", "canal.chuangliang_ad.toutiao_ad_keywords.table,canal.chuangliang_ad.toutiao_ad_keywords.fields,canal.chuangliang_ad.toutiao_ad_keywords.kafka.sink.topic");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_ad_keywords.table", "toutiao_ad_keywords");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_ad_keywords.fields", "id,advertiser_id,ad_id,ad_keywords,ad_keywords_md5,create_time,update_time");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_ad_keywords.kafka.sink.topic", "toutiao_ad_keywords-sink");
+
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_creative_info", "canal.chuangliang_ad.toutiao_creative_info.table,canal.chuangliang_ad.toutiao_creative_info.fields,canal.chuangliang_ad.toutiao_creative_info.kafka.sink.topic");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_creative_info.table", "toutiao_creative_info");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_creative_info.fields", "id,advertiser_id,creative_id,ad_id,title,title_md5,creative_word_ids,status,opt_status,third_party_id,image_mode,video_id,image_id,image_ids,create_time,update_time,creative_create_time,creative_modify_time,metarials");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_creative_info.kafka.sink.topic", "toutiao_creative_info-sink");
+
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_advertiser_daily_fund", "canal.chuangliang_ad.toutiao_advertiser_daily_fund.table,canal.chuangliang_ad.toutiao_advertiser_daily_fund.fields,canal.chuangliang_ad.toutiao_advertiser_daily_fund.kafka.sink.topic");
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_advertiser_daily_fund.table", "toutiao_advertiser_daily_fund");
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_advertiser_daily_fund.fields", "id,advertiser_id,days,balance,cash_cost,cost,frozen,income,reward_cost,return_goods_cost,transfer_in,transfer_out,create_time,update_time");
@@ -59,7 +69,7 @@ public class ConfigCenterManager {
 
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_campaign_info", "canal.chuangliang_ad.toutiao_campaign_info.table,canal.chuangliang_ad.toutiao_campaign_info.fields,canal.chuangliang_ad.toutiao_campaign_info.kafka.sink.topic");
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_campaign_info.table", "toutiao_campaign_info");
-        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_campaign_info.fields", "id,campaign_id,advertiser_id,name,status,budget_mode,landing_type,budget,campaign_create_time,campaign_modify_time,unique_fk,is_locate_create,create_time,update_time");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_campaign_info.fields", "id,campaign_id,advertiser_id,name,status,budget_mode,landing_type,budget,campaign_create_time,campaign_modify_time,unique_fk,is_local_create,create_time,update_time");
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_campaign_info.kafka.sink.topic", "toutiao_campaign_info-sink");
 
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_ad_info", "canal.chuangliang_ad.toutiao_ad_info.table,canal.chuangliang_ad.toutiao_ad_info.fields,canal.chuangliang_ad.toutiao_ad_info.kafka.sink.topic");
@@ -74,7 +84,7 @@ public class ConfigCenterManager {
 
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info", "canal.chuangliang_ad.toutiao_material_info.table,canal.chuangliang_ad.toutiao_material_info.fields,canal.chuangliang_ad.toutiao_material_info.kafka.sink.topic");
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info.table", "toutiao_material_info");
-        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info.fields", "id,advertiser_id,touttiao_material_str_id,toutiao_material_id,material_type,signature,size,width,height,format,bit_rate,duration,source,update_time");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info.fields", "id,advertiser_id,toutiao_material_id,touttiao_material_str_id,material_type,signature,size,width,height,format,bit_rate,duration,source,update_time");
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info.kafka.sink.topic", "toutiao_material_info-sink");
     }
 
