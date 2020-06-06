@@ -45,7 +45,7 @@ public class Tests {
     private static void testConfig() {
         String nameservices = "canal.chuangliang_ad.toutiao_campaign_info";
         String[] serviceNames = nameservices.split(",");
-        ConfigCenterManager.init();
+        ConfigCenterManager.test_case_init();
         for (String ns : serviceNames) {
             String table = ConfigCenterManager.getConfigValues(ns + ".table");
             String fields = ConfigCenterManager.getConfigValues(ns + ".fields");
@@ -83,7 +83,7 @@ public class Tests {
 
     private static void testLoad() {
         String[] serviceNames = {"",""};
-        FileConfigCenterManager.init();
+        FileConfigCenterManager.test_case_init();
         for (String ns : serviceNames) {
             String docName = FileConfigCenterManager.getConfigValues(ns + ".doc_name");
             String sourceTopic = FileConfigCenterManager.getConfigValues(ns + ".kafka.source.topic");

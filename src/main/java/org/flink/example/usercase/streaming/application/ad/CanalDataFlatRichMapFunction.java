@@ -48,7 +48,8 @@ public class CanalDataFlatRichMapFunction extends RichFlatMapFunction<String, Re
     }
 
     private void reload() {
-        ConfigCenterManager.init();
+        ConfigCenterManager.test_case_init();
+        //ConfigCenterManager.init();
         for (String ns : serviceNames) {
             String table = ConfigCenterManager.getConfigValues(ns+".table");
             String fields = ConfigCenterManager.getConfigValues(ns+".fields");
@@ -103,14 +104,14 @@ public class CanalDataFlatRichMapFunction extends RichFlatMapFunction<String, Re
         LOGGER.info(eventJsonStr);
         JSONObject json = JSONObject.parseObject(eventJsonStr);
         String table = json.getString(PropertiesConstants.CANAL_JSON_DATA_TABLE_KEY);
-        /*for(String k : appConfigs.keySet()) {
+        for(String k : appConfigs.keySet()) {
             ConfigValue cv = appConfigs.get(k);
             LOGGER.info("ConfigCenter appConfigs ac_key:{}",k);
             for (String kk : cv.getConfigs().keySet())
                 LOGGER.info("ConfigCenter appConfigs ac_key:{}, attrs[{}:{}]", k,kk,cv.getConfig(kk));
         }
         LOGGER.info("Stream data of table:{},", table);
-        */
+
         if (appConfigs.containsKey(table)) {
             String sinkTopic = appConfigs.get(table).getConfig("kafka.sink.topic");
             JSONArray datasJson = json.getJSONArray("data");
