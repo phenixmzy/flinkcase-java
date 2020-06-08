@@ -51,17 +51,17 @@ public class CanalDataFlatRichMapFunction extends RichFlatMapFunction<String, Re
         ConfigCenterManager.test_case_init();
         //ConfigCenterManager.init();
         for (String ns : serviceNames) {
-            String table = ConfigCenterManager.getConfigValues(ns+".table");
-            String fields = ConfigCenterManager.getConfigValues(ns+".fields");
-            String sinkTopic = ConfigCenterManager.getConfigValues(ns+".kafka.sink.topic");
+            String table = ConfigCenterManager.getConfigValues(ns + ".table");
+            String fields = ConfigCenterManager.getConfigValues(ns + ".fields");
+            String sinkTopic = ConfigCenterManager.getConfigValues(ns + ".kafka.sink.topic");
             LOGGER.info("table:{}, fields:{}, sinkTopic:{}", table, fields, sinkTopic);
-            System.out.println("table:"+ table + ", fields:"+ fields + ", sinkTopic:" + sinkTopic);
+            System.out.println("table:" + table + ", fields:" + fields + ", sinkTopic:" + sinkTopic);
 
             ConfigValue cv = new ConfigValue(table);
             cv.putConfigs("kafka.sink.topic", sinkTopic);
-            cv.putConfigs("table.fields",fields);
+            cv.putConfigs("table.fields", fields);
             appConfigs.put(table, cv);
-            tableFields.put(table,getConfigFields(fields));
+            tableFields.put(table, getConfigFields(fields));
         }
     }
 
@@ -94,7 +94,7 @@ public class CanalDataFlatRichMapFunction extends RichFlatMapFunction<String, Re
             builder.append(value.toString()).append(ConfigCenterManager.SPLIT_FLAG);
         }
 
-        String outputData =  builder.length() > 0 ? builder.substring(0, builder.length() - ConfigCenterManager.SPLIT_FLAG.length()) : "";
+        String outputData = builder.length() > 0 ? builder.substring(0, builder.length() - ConfigCenterManager.SPLIT_FLAG.length()) : "";
         RecordData rd = new RecordData(topic, outputData);
         return rd;
     }
@@ -104,31 +104,31 @@ public class CanalDataFlatRichMapFunction extends RichFlatMapFunction<String, Re
         LOGGER.info(eventJsonStr);
         JSONObject json = JSONObject.parseObject(eventJsonStr);
         String table = json.getString(PropertiesConstants.CANAL_JSON_DATA_TABLE_KEY);
-        for(String k : appConfigs.keySet()) {
+        for (String k : appConfigs.keySet()) {
             ConfigValue cv = appConfigs.get(k);
-            LOGGER.info("ConfigCenter appConfigs ac_key:{}",k);
+            LOGGER.info("ConfigCenter appConfigs ac_key:{}", k);
             for (String kk : cv.getConfigs().keySet())
-                LOGGER.info("ConfigCenter appConfigs ac_key:{}, attrs[{}:{}]", k,kk,cv.getConfig(kk));
+                LOGGER.info("ConfigCenter appConfigs ac_key:{}, attrs[{}:{}]", k, kk, cv.getConfig(kk));
         }
         LOGGER.info("Stream data of table:{},", table);
 
         if (appConfigs.containsKey(table)) {
             String sinkTopic = appConfigs.get(table).getConfig("kafka.sink.topic");
+
             JSONArray datasJson = json.getJSONArray("data");
             if (datasJson == null) {
-                LOGGER.warn("warn data, the data is null.: {}" , eventJsonStr);
+                LOGGER.warn("warn data, the data is null.: {}", eventJsonStr);
                 return;
             }
             try {
-                for (int i =0, size = datasJson.size(); i < size; i++) {
+                for (int i = 0, size = datasJson.size(); i < size; i++) {
                     JSONObject dataJson = datasJson.getJSONObject(i);
                     collector.collect(getRecordData(table, sinkTopic, dataJson));
                     LOGGER.info("collector table:{}, sinkTopic:{}", table, sinkTopic);
                 }
             } catch (Exception e) {
-                LOGGER.error("error data: {}" , eventJsonStr);
+                LOGGER.error("error data: {}", eventJsonStr);
             }
-
             LOGGER.info("collector table:{}, sinkTopic:{}, recordCount:{}", table, sinkTopic, datasJson.size());
         }
     }

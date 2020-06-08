@@ -3,9 +3,6 @@ package org.flink.example.usercase.streaming.application.configcenter;
 import java.util.HashMap;
 
 public class ConfigCenterManager {
-    public final static String AD_CONFIG_FIELDS = "ad_id,ad_name,ad_channel";
-    public final static String APP_CONFIG_FIELDS = "app_id,app_name,app_size";
-
     public final static String NULL_STR = "NULL";
     public final static String SPLIT_FLAG = "\u0001";
 
@@ -144,6 +141,7 @@ public class ConfigCenterManager {
         CONFIG_VALUES.put("canal.chuangliang_ad.material_special.fields", "special_id,special_name,note,owner_user_id,is_open_permission,create_time,create_user_id,update_time,update_user_id,is_delete");
         CONFIG_VALUES.put("canal.chuangliang_ad.material_special.kafka.sink.topic", "test_material_special-sink");
 
+
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_campaign_info", "canal.chuangliang_ad.toutiao_campaign_info.table,canal.chuangliang_ad.toutiao_campaign_info.fields,canal.chuangliang_ad.toutiao_campaign_info.kafka.sink.topic");
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_campaign_info.table", "toutiao_campaign_info");
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_campaign_info.fields", "id,campaign_id,advertiser_id,name,status,budget_mode,landing_type,budget,campaign_create_time,campaign_modify_time,unique_fk,is_local_create,create_time,update_time");
@@ -161,7 +159,7 @@ public class ConfigCenterManager {
 
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info", "canal.chuangliang_ad.toutiao_material_info.table,canal.chuangliang_ad.toutiao_material_info.fields,canal.chuangliang_ad.toutiao_material_info.kafka.sink.topic");
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info.table", "toutiao_material_info");
-        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info.fields", "id,advertiser_id,toutiao_material_id,touttiao_material_str_id,material_type,signature,size,width,height,format,bit_rate,duration,source,update_time");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info.fields", "id,advertiser_id,toutiao_material_id,toutiao_material_str_id,material_type,signature,size,width,height,format,bit_rate,duration,source,update_time");
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info.kafka.sink.topic", "test_toutiao_material_info-sink");
     }
 
