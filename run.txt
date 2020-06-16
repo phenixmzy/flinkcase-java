@@ -1,3 +1,5 @@
+辅助命令:
+/usr/local/kafka/bin/kafka-consumer-groups.sh --new-consumer --bootstrap-server adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092 --group test_material_group-sink.gid --describe
 ============================================================
 内容纲要
 一 Doris表同步清单
@@ -28,6 +30,7 @@ DB-TABLE
 13 toutiao_ad_keywords
 14 toutiao_creative_info
 15 toutiao_advertiser_daily_fund
+16 toutiao_convert_info
 ============================================================
 二 Doris建表
 FILE-JSON:
@@ -391,23 +394,24 @@ PROPERTIES (
 );
 ===============================================================
 DB-CANAL:
+#varchar扩展四倍-doris表未重建
 CREATE TABLE admin_user (
   user_id int NOT NULL COMMENT '用户id',
   project_id int NOT NULL DEFAULT '0' COMMENT '项目组ID',
   group_id int NOT NULL DEFAULT '0' COMMENT '权限组ID',
-  email varchar(64) NOT NULL DEFAULT '' COMMENT '邮箱',
-  user_name varchar(32) NOT NULL DEFAULT '' COMMENT '用户名',
-  password varchar(32) NOT NULL DEFAULT '' COMMENT '密码',
+  email varchar(256) NOT NULL DEFAULT '' COMMENT '邮箱',
+  user_name varchar(128) NOT NULL DEFAULT '' COMMENT '用户名',
+  password varchar(128) NOT NULL DEFAULT '' COMMENT '密码',
   mobile varchar(20) NOT NULL DEFAULT '' COMMENT '手机号码',
-  note varchar(128) NOT NULL DEFAULT '' COMMENT '备注',
+  note varchar(512) NOT NULL DEFAULT '' COMMENT '备注',
   is_lock tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否锁定',
   parent_id int NOT NULL DEFAULT '0' COMMENT '所属用户id',
   create_time datetime NOT NULL COMMENT '创建时间',
   create_user_id int NOT NULL COMMENT '创建用户ID',
   update_time datetime NOT NULL COMMENT '最后更新时间',
   update_user_id int NOT NULL DEFAULT '0' COMMENT '最后更新的用户ID',
-  gray_permissions varchar(1024) NOT NULL DEFAULT '' COMMENT '灰发权限，逗号隔开',
-  data_range varchar(16) NOT NULL DEFAULT 'inherit' COMMENT '数据权限，默认是从权限组继承',
+  gray_permissions varchar(4096) NOT NULL DEFAULT '' COMMENT '灰发权限，逗号隔开',
+  data_range varchar(64) NOT NULL DEFAULT 'inherit' COMMENT '数据权限，默认是从权限组继承',
   is_delete tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否已删除'
 )
 UNIQUE KEY(user_id)
@@ -417,11 +421,12 @@ PROPERTIES (
  "replication_num" = "2"
 );
 
+#varchar扩展四倍-doris表未重建
 CREATE TABLE admin_project (
   project_id int NOT NULL,
   project_name varchar(32) NOT NULL DEFAULT '' COMMENT '项目组名字',
   owner_user_id int NOT NULL COMMENT '所属主账号id',
-  note varchar(256) NOT NULL DEFAULT '' COMMENT '备注',
+  note varchar(1024) NOT NULL DEFAULT '' COMMENT '备注',
   create_time datetime NOT NULL COMMENT '创建时间',
   create_user_id int NOT NULL DEFAULT '0' COMMENT '创建用户ID',
   update_time datetime NOT NULL COMMENT '最后更新时间',
@@ -435,19 +440,20 @@ PROPERTIES (
  "replication_num" = "2"
 );
 
+#varchar扩展四倍-doris表未重建
 CREATE TABLE app (
   app_id int NOT NULL COMMENT '创量应用ID',
   app_group_id int NOT NULL DEFAULT '0' COMMENT '创量应用组ID',
-  app_name varchar(64) NOT NULL DEFAULT '' COMMENT '创量应用名称',
-  app_key varchar(32) NOT NULL DEFAULT '' COMMENT '创量APPKEY',
+  app_name varchar(256) NOT NULL DEFAULT '' COMMENT '创量应用名称',
+  app_key varchar(128) NOT NULL DEFAULT '' COMMENT '创量APPKEY',
   owner_user_id int NOT NULL DEFAULT '0' COMMENT '所属用户ID',
-  package_name varchar(128) NOT NULL DEFAULT '' COMMENT '包名',
-  appstore_id varchar(64) NOT NULL DEFAULT '' COMMENT '苹果appstore_id',
-  appstore_url varchar(256) NOT NULL DEFAULT '' COMMENT '苹果appstore地址',
-  platform varchar(64) NOT NULL DEFAULT '' COMMENT '平台，ios/android/h5等',
-  icon_uri varchar(256) NOT NULL DEFAULT '' COMMENT '图标的相对地址',
+  package_name varchar(512) NOT NULL DEFAULT '' COMMENT '包名',
+  appstore_id varchar(256) NOT NULL DEFAULT '' COMMENT '苹果appstore_id',
+  appstore_url varchar(1024) NOT NULL DEFAULT '' COMMENT '苹果appstore地址',
+  platform varchar(256) NOT NULL DEFAULT '' COMMENT '平台，ios/android/h5等',
+  icon_uri varchar(1024) NOT NULL DEFAULT '' COMMENT '图标的相对地址',
   is_active tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否活跃应用',
-  cost_target_config varchar(1024) NOT NULL DEFAULT '' COMMENT '成本目标配置(JSON格式)',
+  cost_target_config varchar(4096) NOT NULL DEFAULT '' COMMENT '成本目标配置(JSON格式)',
   create_time datetime NOT NULL COMMENT '创建时间',
   create_user_id int NOT NULL DEFAULT '0' COMMENT '创建用户ID',
   update_time datetime NOT NULL COMMENT '最后更新时间',
@@ -461,26 +467,27 @@ PROPERTIES (
  "replication_num" = "2"
 );
 
+#varchar扩展四倍-doris表未重建，extra_info字段未修改,原设置已经最长
 CREATE TABLE material (
-  material_id int NOT NULL COMMENT '素材ID',
+  material_id bigint NOT NULL COMMENT '素材ID',
   special_id int NOT NULL DEFAULT '0' COMMENT '专辑ID',
   copy_material_id int NOT NULL DEFAULT '0' COMMENT '复制素材的ID，0则是手动添加',
   group_id int NOT NULL DEFAULT '0' COMMENT '素材组ID',
-  material_name varchar(64) NOT NULL DEFAULT '' COMMENT '素材名称',
-  material_type varchar(16) NOT NULL DEFAULT '' COMMENT '素材类型：image/video',
+  material_name varchar(1024) NOT NULL DEFAULT '' COMMENT '素材名称',
+  material_type varchar(256) NOT NULL DEFAULT '' COMMENT '素材类型：image/video',
   height int NOT NULL DEFAULT '0' COMMENT '高度',
   width int NOT NULL DEFAULT '0' COMMENT '宽度',
   aspect_ratio float NOT NULL DEFAULT '0.0000' COMMENT '素材宽高比',
   video_duration float NOT NULL DEFAULT '0.00' COMMENT '视频时长',
-  thumbnail_uri varchar(256) NOT NULL DEFAULT '' COMMENT '缩略图地址',
-  file_uri varchar(256) NOT NULL DEFAULT '' COMMENT '文件uri',
+  thumbnail_uri varchar(1024) NOT NULL DEFAULT '' COMMENT '缩略图地址',
+  file_uri varchar(1024) NOT NULL DEFAULT '' COMMENT '文件uri',
   file_size int NOT NULL DEFAULT '0' COMMENT '文件大小（字节）',
   file_direction tinyint(4) NOT NULL DEFAULT '0' COMMENT '视频/文件版式:1=竖版，2=横版',
-  file_md5 char(32) NOT NULL DEFAULT '' COMMENT '文件md5',
+  file_md5 char(128) NOT NULL DEFAULT '' COMMENT '文件md5',
   extra_info varchar(65530) NOT NULL COMMENT '附加信息（json）',
-  creative_user varchar(32) NOT NULL DEFAULT '' COMMENT '创意人员',
-  make_user varchar(32) NOT NULL DEFAULT '' COMMENT '设计师',
-  note varchar(256) NOT NULL DEFAULT '' COMMENT '备注',
+  creative_user varchar(512) NOT NULL DEFAULT '' COMMENT '创意人员',
+  make_user varchar(512) NOT NULL DEFAULT '' COMMENT '设计师',
+  note varchar(4096) NOT NULL DEFAULT '' COMMENT '备注',
   owner_user_id int DEFAULT NULL COMMENT '所属企业管理员ID',
   create_time datetime NOT NULL  COMMENT '创建时间',
   create_user_id int NOT NULL DEFAULT '0' COMMENT '创建用户ID',
@@ -489,17 +496,18 @@ CREATE TABLE material (
   is_delete tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否已删除'
 )
 UNIQUE KEY(material_id)
-DISTRIBUTED BY HASH(material_id) BUCKETS 2
+DISTRIBUTED BY HASH(material_id) BUCKETS 6
 PROPERTIES (
 "storage_type" = "COLUMN",
  "replication_num" = "2"
 );
 
+#varchar扩展四倍-doris表未重建
 CREATE TABLE material_group (
   group_id int NOT NULL  COMMENT '素材组ID',
-  group_name varchar(64) NOT NULL DEFAULT '' COMMENT '素材组名称',
+  group_name varchar(1024) NOT NULL DEFAULT '' COMMENT '素材组名称',
   special_id int NOT NULL DEFAULT '0' COMMENT '所属专辑ID',
-  note varchar(512) NOT NULL DEFAULT '' COMMENT '备注',
+  note varchar(8192) NOT NULL DEFAULT '' COMMENT '备注',
   create_time datetime NOT NULL COMMENT '创建时间',
   create_user_id int NOT NULL DEFAULT '0' COMMENT '创建用户ID',
   update_time datetime NOT NULL COMMENT '最后更新时间',
@@ -513,10 +521,11 @@ PROPERTIES (
  "replication_num" = "2"
 );
 
+#varchar扩展四倍-doris表未重建
 CREATE TABLE material_special (
   special_id int NOT NULL COMMENT '素材专辑ID',
-  special_name varchar(64) NOT NULL DEFAULT '' COMMENT '专辑名称',
-  note varchar(512) NOT NULL DEFAULT '' COMMENT '备注',
+  special_name varchar(128) NOT NULL DEFAULT '' COMMENT '专辑名称',
+  note varchar(2048) NOT NULL DEFAULT '' COMMENT '备注',
   owner_user_id int NOT NULL DEFAULT '0' COMMENT '所属账号ID',
   is_open_permission tinyint(4) DEFAULT '0' COMMENT '1=所有人可见，0=有权限的人可见',
   create_time datetime NOT NULL COMMENT '创建时间',
@@ -532,28 +541,30 @@ PROPERTIES (
  "replication_num" = "2"
 );
 
+#varchar长度已扩展4倍-doris表未重建
 CREATE TABLE media_account (
   media_account_id int NOT NULL COMMENT '媒体账号ID',
   parent_id int NOT NULL DEFAULT '0' COMMENT '父媒体账号id',
+  toutiao_parent_id BIGINT NOT NULL  DEFAULT 0  COMMENT '从属头条的的客户中心id',
   owner_user_id int NOT NULL DEFAULT '0' COMMENT '所属账户ID',
-  media_type varchar(32) NOT NULL DEFAULT '' COMMENT '媒体类型',
+  media_type varchar(512) NOT NULL DEFAULT '' COMMENT '媒体类型',
   media_agent_id int NOT NULL DEFAULT '0' COMMENT '媒体代理ID',
-  advertiser_type varchar(32) NOT NULL DEFAULT '' COMMENT '媒体账号类型',
-  advertiser_id varchar(64) NOT NULL DEFAULT '' COMMENT '媒体平台的账号ID',
-  advertiser_name varchar(64) NOT NULL DEFAULT '' COMMENT '媒体平台的账户名',
-  advertiser_nick varchar(64) NOT NULL DEFAULT '' COMMENT '媒体平台的账号昵称',
-  advertiser_source varchar(16) NOT NULL DEFAULT 'hard' COMMENT '媒体账号来源',
+  advertiser_type varchar(512) NOT NULL DEFAULT '' COMMENT '媒体账号类型',
+  advertiser_id bigint NOT NULL DEFAULT '0' COMMENT '媒体平台的账号ID',
+  advertiser_name varchar(1024) NOT NULL DEFAULT '' COMMENT '媒体平台的账户名',
+  advertiser_nick varchar(1024) NOT NULL DEFAULT '' COMMENT '媒体平台的账号昵称',
+  advertiser_source varchar(256) NOT NULL DEFAULT 'hard' COMMENT '媒体账号来源',
   advertiser_status tinyint(1) NOT NULL DEFAULT '1' COMMENT '媒体账号状态：1=正常，0=停投',
-  develop_app_key varchar(64) NOT NULL DEFAULT '' COMMENT '媒体平台开发者appkey',
-  develop_app_secret varchar(64) NOT NULL DEFAULT '' COMMENT '媒体平台开发者appsecret',
-  access_token varchar(64) NOT NULL DEFAULT '' COMMENT 'access token',
+  develop_app_key varchar(1024) NOT NULL DEFAULT '' COMMENT '媒体平台开发者appkey',
+  develop_app_secret varchar(1024) NOT NULL DEFAULT '' COMMENT '媒体平台开发者appsecret',
+  access_token varchar(1024) NOT NULL DEFAULT '' COMMENT 'access token',
   access_token_time datetime NOT NULL  COMMENT 'access token时间',
   access_token_expires int NOT NULL DEFAULT '0' COMMENT 'access token过期时间',
   access_token_retry_times int NOT NULL DEFAULT '0' COMMENT 'access token重新刷新次数',
-  refresh_token varchar(64) NOT NULL DEFAULT '' COMMENT 'refresh token',
-  refresh_token_expires varchar(64) NOT NULL DEFAULT '0' COMMENT 'refresh token过期时间',
-  company varchar(64) NOT NULL DEFAULT '' COMMENT '公司名',
-  note varchar(64) NOT NULL DEFAULT '' COMMENT '备注',
+  refresh_token varchar(1024) NOT NULL DEFAULT '' COMMENT 'refresh token',
+  refresh_token_expires varchar(1024) NOT NULL DEFAULT '0' COMMENT 'refresh token过期时间',
+  company varchar(1024) NOT NULL DEFAULT '' COMMENT '公司名',
+  note varchar(1024) NOT NULL DEFAULT '' COMMENT '备注',
   create_time datetime NOT NULL COMMENT '创建时间',
   create_user_id int NOT NULL DEFAULT '0' COMMENT '创建用户ID',
   update_time datetime NOT NULL COMMENT '最后更新时间',
@@ -570,14 +581,15 @@ PROPERTIES (
  "replication_num" = "2"
 );
 
+#varchar长度已扩展4倍-doris表未重建
 CREATE TABLE media_agent (
   media_agent_id int NOT NULL  COMMENT '媒体代理ID',
-  agent_name varchar(32) NOT NULL DEFAULT '' COMMENT '代理名称',
-  agent_company varchar(64) NOT NULL DEFAULT '' COMMENT '代理公司名',
+  agent_name varchar(128) NOT NULL DEFAULT '' COMMENT '代理名称',
+  agent_company varchar(256) NOT NULL DEFAULT '' COMMENT '代理公司名',
   agent_status tinyint(1) NOT NULL DEFAULT '1' COMMENT '合作状态：1=正常，0=暂停',
-  media_type varchar(32) NOT NULL DEFAULT '' COMMENT '媒体类型',
+  media_type varchar(128) NOT NULL DEFAULT '' COMMENT '媒体类型',
   rebate decimal(4,2) NOT NULL DEFAULT '0.00' COMMENT '返点百分点',
-  note varchar(256) NOT NULL DEFAULT '' COMMENT '备注',
+  note varchar(1024) NOT NULL DEFAULT '' COMMENT '备注',
   create_time datetime NOT NULL COMMENT '创建时间',
   owner_user_id int NOT NULL DEFAULT '0' COMMENT '所属账户ID',
   create_user_id int NOT NULL DEFAULT '0' COMMENT '创建用户ID',
@@ -592,17 +604,18 @@ PROPERTIES (
  "replication_num" = "2"
 );
 
+#varchar长度已扩展4倍-doris表未重建
 CREATE TABLE toutiao_campaign_info (
   campaign_id bigint NOT NULL DEFAULT '0' COMMENT '广告组id',
   advertiser_id bigint  NOT NULL DEFAULT '0' COMMENT '媒体账户',
-  name varchar(100) NOT NULL DEFAULT '' COMMENT '名称',
-  status varchar(64) NOT NULL DEFAULT '' COMMENT '状态',
-  budget_mode varchar(64) NOT NULL DEFAULT 'BUDGET_MODE_INFINITE' COMMENT '预算模式',
-  landing_type varchar(64) NOT NULL COMMENT '投放目的',
-  budget int(11)  NOT NULL DEFAULT '0' COMMENT '预算',
+  name varchar(400) NOT NULL DEFAULT '' COMMENT '名称',
+  status varchar(256) NOT NULL DEFAULT '' COMMENT '状态',
+  budget_mode varchar(256) NOT NULL DEFAULT 'BUDGET_MODE_INFINITE' COMMENT '预算模式',
+  landing_type varchar(256) NOT NULL COMMENT '投放目的',
+  budget DECIMAL(18,2)  NOT NULL DEFAULT '0.00' COMMENT '预算',
   campaign_create_time datetime NOT NULL ,
   campaign_modify_time datetime NOT NULL ,
-  unique_fk varchar(64) NOT NULL DEFAULT '' COMMENT '第三方唯一键',
+  unique_fk varchar(256) NOT NULL DEFAULT '' COMMENT '第三方唯一键',
   is_local_create tinyint(4) NOT NULL DEFAULT '0' COMMENT '0头条创建1创量创建',
   create_time datetime COMMENT '创建时间',
   update_time datetime COMMENT '更新时间'
@@ -614,44 +627,46 @@ PROPERTIES (
  "replication_num" = "2"
 );
 
+#varchar长度已扩展4倍-doris表未重建，audience_md5，audience未扩展，原已最长
 CREATE TABLE toutiao_ad_info (
   ad_id bigint   DEFAULT '0' COMMENT '广告计划id',
   advertiser_id bigint   DEFAULT '0' COMMENT '媒体账号',
   campaign_id bigint   DEFAULT '0' COMMENT '广告组id',
-  inventory_type varchar(200)  DEFAULT '' COMMENT '投放位置',
-  delivery_range varchar(64)  DEFAULT '' COMMENT '投放范围',
-  status varchar(100)  DEFAULT '' COMMENT '状态',
-  opt_status varchar(100)  DEFAULT '' COMMENT '操作状态',
-  name varchar(1000)  DEFAULT '' COMMENT '计划名称',
-  budget_mode varchar(32)  DEFAULT '' COMMENT '预算模式',
+  inventory_type varchar(800)  DEFAULT '' COMMENT '投放位置',
+  delivery_range varchar(256)  DEFAULT '' COMMENT '投放范围',
+  status varchar(400)  DEFAULT '' COMMENT '状态',
+  opt_status varchar(400)  DEFAULT '' COMMENT '操作状态',
+  name varchar(4000)  DEFAULT '' COMMENT '计划名称',
+  budget_mode varchar(128)  DEFAULT '' COMMENT '预算模式',
   budget decimal(18,2)  DEFAULT '0.00' COMMENT '广告预算',
   start_time datetime  COMMENT '投放时间',
   end_time datetime  COMMENT '投放时间',
   bid decimal(10,2)   DEFAULT '0.00' COMMENT '出价',
-  pricing varchar(32)  DEFAULT '' COMMENT '出价类型',
-  schedule_type varchar(64)  DEFAULT '' COMMENT '广告投放时间类型',
-  schedule_time varchar(350)  DEFAULT '' COMMENT '广告投放时段',
-  flow_control_mode varchar(64)  DEFAULT '' COMMENT '广告投放速度类型',
-  open_url varchar(200)  DEFAULT '' COMMENT '应用直达链接',
-  download_type varchar(32)  COMMENT '应用下载方式',
-  download_url varchar(200)  DEFAULT '' COMMENT '广告应用下载链接',
-  external_url varchar(200)  DEFAULT '' COMMENT '广告落地页链接',
-  app_type varchar(64)  DEFAULT '' COMMENT '广告应用下载类型,',
-  union_video_type varchar(64)  COMMENT '穿山甲视频创意类',
-  package varchar(200)  DEFAULT '' COMMENT '包名',
-  hide_if_exists varchar(32)  DEFAULT '' COMMENT '过滤已安装',
-  hide_if_converted varchar(32)  DEFAULT '' COMMENT '过滤已转化用户类型字段',
+  pricing varchar(128)  DEFAULT '' COMMENT '出价类型',
+  schedule_type varchar(256)  DEFAULT '' COMMENT '广告投放时间类型',
+  schedule_time varchar(1400)  DEFAULT '' COMMENT '广告投放时段',
+  flow_control_mode varchar(256)  DEFAULT '' COMMENT '广告投放速度类型',
+  open_url varchar(800)  DEFAULT '' COMMENT '应用直达链接',
+  download_type varchar(128)  COMMENT '应用下载方式',
+  download_url varchar(800)  DEFAULT '' COMMENT '广告应用下载链接',
+  external_url varchar(800)  DEFAULT '' COMMENT '广告落地页链接',
+  app_type varchar(256)  DEFAULT '' COMMENT '广告应用下载类型,',
+  union_video_type varchar(256)  COMMENT '穿山甲视频创意类',
+  package varchar(800)  DEFAULT '' COMMENT '包名',
+  hide_if_exists varchar(128)  DEFAULT '' COMMENT '过滤已安装',
+  hide_if_converted varchar(128)  DEFAULT '' COMMENT '过滤已转化用户类型字段',
   cpa_bid decimal(10,2)   DEFAULT '0.00' COMMENT 'ocpm广告转化出价',
   audience varchar(65530)  COMMENT '受众参数',
+  audience_md5 char(32) COMMENT '受众参数的签名',
   convert_id bigint   DEFAULT '0' COMMENT '转化id',
-  deep_bid_type varchar(32)  COMMENT 'deep_bid_type',
+  deep_bid_type varchar(128)  COMMENT 'deep_bid_type',
   deep_cpabid decimal(10,2)  DEFAULT '0.00' COMMENT '深度优化出价',
   roi_goal decimal(10,4)  DEFAULT '0.0000' COMMENT '深度转化ROI系数',
-  smart_bid_type varchar(32)  DEFAULT '' COMMENT '自动出价类型，OCPM支持',
-  adjust_cpa varchar(32)  DEFAULT '0' COMMENT '是否调整自动出价，意味如果逾期成本不在范围内将在此基础上调整，仅OCPM支持',
+  smart_bid_type varchar(128)  DEFAULT '' COMMENT '自动出价类型，OCPM支持',
+  adjust_cpa varchar(128)  DEFAULT '0' COMMENT '是否调整自动出价，意味如果逾期成本不在范围内将在此基础上调整，仅OCPM支持',
   is_local_create tinyint(4)  DEFAULT '0' COMMENT '0头条创建1idt创建',
-  download_mode varchar(32)  DEFAULT '' COMMENT '下载模式',
-  learning_phase varchar(32)  DEFAULT '' COMMENT '学习期状态',
+  download_mode varchar(128)  DEFAULT '' COMMENT '下载模式',
+  learning_phase varchar(128)  DEFAULT '' COMMENT '学习期状态',
   cl_app_id int(10)  DEFAULT '0' COMMENT '创量应用的app_id',
   activity_id int(10)  DEFAULT '0' COMMENT '活动id',
   group_id bigint  DEFAULT '0' COMMENT '投放管家项目id',
@@ -661,16 +676,17 @@ CREATE TABLE toutiao_ad_info (
   update_time datetime
 )
 UNIQUE KEY (ad_id)
-DISTRIBUTED BY HASH(ad_id) BUCKETS 2
+DISTRIBUTED BY HASH(ad_id) BUCKETS 6
 PROPERTIES
 (
 	"storage_type"="column",
     "replication_num" = "2"
 );
 
+#varchar长度已扩展4倍-doris表未重建
 CREATE TABLE toutiao_inventory_info (
-  inventory_key varchar(32) NOT NULL DEFAULT '' COMMENT '投放位置value',
-  inventory_name varchar(32) NOT NULL COMMENT '投放位置名称'
+  inventory_key varchar(128) NOT NULL DEFAULT '' COMMENT '投放位置value',
+  inventory_name varchar(128) NOT NULL COMMENT '投放位置名称'
 )
 UNIQUE KEY(inventory_key)
 DISTRIBUTED BY HASH(inventory_key) BUCKETS 2
@@ -679,19 +695,21 @@ PROPERTIES (
  "replication_num" = "2"
 );
 
+#varchar长度已扩展4倍-doris表未重建
 CREATE TABLE toutiao_material_info (
   advertiser_id bigint NOT NULL DEFAULT '0' COMMENT '广告主id',
   toutiao_material_id bigint NOT NULL DEFAULT '0' COMMENT '头条素材id',
-  toutiao_material_str_id varchar(128) NOT NULL DEFAULT '0' COMMENT '头条素材id字符串',
-  material_type varchar(16) NOT NULL DEFAULT '' COMMENT '素材类型：image/video',
-  signature varchar(32) NOT NULL DEFAULT '' COMMENT '素材md5',
+  toutiao_material_str_id varchar(512) NOT NULL DEFAULT '0' COMMENT '头条素材id字符串',
+  material_type varchar(64) NOT NULL DEFAULT '' COMMENT '素材类型：image/video',
+  signature varchar(128) NOT NULL DEFAULT '' COMMENT '素材md5',
   size int NOT NULL DEFAULT '0' COMMENT '文件大小',
   width int NOT NULL DEFAULT '0' COMMENT '宽度',
   height int NOT NULL DEFAULT '0' COMMENT '高度',
-  format varchar(32) NOT NULL DEFAULT '' COMMENT '格式',
+  format varchar(128) NOT NULL DEFAULT '' COMMENT '格式',
   bit_rate int NOT NULL DEFAULT '0' COMMENT '码率',
   duration int NOT NULL COMMENT '视频时长',
-  source varchar(32) NOT NULL DEFAULT '' COMMENT '素材来源',
+  source varchar(128) NOT NULL DEFAULT '' COMMENT '素材来源',
+  filename  varchar(512) NOT NULL DEFAULT '' COMMENT '素材文件名',
   update_time datetime NOT NULL
 )
 UNIQUE KEY(advertiser_id,toutiao_material_id)
@@ -701,10 +719,11 @@ PROPERTIES (
  "replication_num" = "2"
 );
 
+#varchar长度已扩展4倍-doris表未重建
 CREATE TABLE toutiao_ad_keywords (
   advertiser_id bigint(20) NOT NULL,
   ad_id bigint(20) NOT NULL,
-  ad_keywords varchar(1024) NOT NULL,
+  ad_keywords varchar(4096) NOT NULL,
   ad_keywords_md5 char(32) NOT NULL,
   create_time datetime NOT NULL COMMENT '创建时间',
   update_time datetime NOT NULL COMMENT '最后更新时间'
@@ -715,25 +734,26 @@ PROPERTIES (
  "replication_num" = "2"
 );
 
+#varchar长度已扩展4倍-doris表未重建
 CREATE TABLE toutiao_creative_info (
   advertiser_id bigint(20)  NOT NULL DEFAULT '0',
   creative_id bigint(20)  NOT NULL DEFAULT '0' COMMENT '创意id',
   ad_id bigint(20)  NOT NULL DEFAULT '0' COMMENT '广告计划id',
-  title varchar(64) NOT NULL DEFAULT '' COMMENT '创意标题',
+  title varchar(256) NOT NULL DEFAULT '' COMMENT '创意标题',
   title_md5 char(32) NOT NULL DEFAULT '',
-  creative_word_ids varchar(1000) NOT NULL DEFAULT '' COMMENT '动态词包ID',
-  status varchar(64) NOT NULL DEFAULT '' COMMENT '创意素材状态',
-  opt_status varchar(64) NOT NULL DEFAULT '' COMMENT '创意素材操作状态',
-  third_party_id varchar(64) NOT NULL DEFAULT '' COMMENT '创意自定义参数',
-  image_mode varchar(64) NOT NULL DEFAULT '' COMMENT '素材类型',
-  video_id varchar(64) NOT NULL DEFAULT '' COMMENT '视频id，视频素材时填写',
-  image_id varchar(500) NOT NULL DEFAULT '' COMMENT '图片id，视频素材时填写',
-  image_ids varchar(500) NOT NULL DEFAULT '' COMMENT '图片id列表，非视频素材时填写',
+  creative_word_ids varchar(4000) NOT NULL DEFAULT '' COMMENT '动态词包ID',
+  status varchar(256) NOT NULL DEFAULT '' COMMENT '创意素材状态',
+  opt_status varchar(256) NOT NULL DEFAULT '' COMMENT '创意素材操作状态',
+  third_party_id varchar(256) NOT NULL DEFAULT '' COMMENT '创意自定义参数',
+  image_mode varchar(256) NOT NULL DEFAULT '' COMMENT '素材类型',
+  video_id varchar(256) NOT NULL DEFAULT '' COMMENT '视频id，视频素材时填写',
+  image_id varchar(2000) NOT NULL DEFAULT '' COMMENT '图片id，视频素材时填写',
+  image_ids varchar(2000) NOT NULL DEFAULT '' COMMENT '图片id列表，非视频素材时填写',
   create_time datetime NOT NULL ,
   update_time datetime NOT NULL ,
   creative_create_time datetime NOT NULL  COMMENT '广告创意创建时间',
   creative_modify_time datetime NOT NULL  COMMENT '广告创意更新时间',
-  metarials varchar(500) NOT NULL
+  metarials varchar(2000) NOT NULL
 )
 UNIQUE KEY(advertiser_id,creative_id)
 DISTRIBUTED BY HASH(advertiser_id,creative_id) BUCKETS 2
@@ -766,6 +786,45 @@ PROPERTIES (
  "in_memory" = "false"
 );
 
+#varchar长度已扩展4倍-doris表未重建
+CREATE TABLE toutiao_convert_info (
+  advertiser_id bigint(20) NOT NULL DEFAULT '0',
+  convert_id bigint(20) NOT NULL DEFAULT '0' COMMENT '转化id',
+  name varchar(400) NOT NULL DEFAULT '' COMMENT '转化名称',
+  opt_status varchar(120) NOT NULL DEFAULT '' COMMENT '操作状态',
+  convert_source_type varchar(400) NOT NULL DEFAULT '' COMMENT '转化来源',
+  status varchar(120) NOT NULL DEFAULT '' COMMENT '转化状态',
+  convert_type varchar(400) NOT NULL DEFAULT '' COMMENT '转化类型',
+  action_track_url varchar(2000) NOT NULL DEFAULT '' COMMENT '点击监测地址',
+  display_track_url varchar(2000) NOT NULL DEFAULT '' COMMENT '展示监控地址',
+  app_type varchar(50) NOT NULL DEFAULT '' COMMENT '应用类型允许值: "APP_ANDROID", "APP_IOS"',
+  package_name varchar(800) NOT NULL DEFAULT '' COMMENT '包名',
+  download_url varchar(2000) NOT NULL DEFAULT '' COMMENT '下载地址',
+  download_url_md5 char(32) NOT NULL DEFAULT '' COMMENT '下载md5',
+  convert_activate_callback_url varchar(400) NOT NULL DEFAULT '' COMMENT '激活回传地址',
+  convert_secret_key varchar(400) NOT NULL DEFAULT '' COMMENT '加密密钥',
+  app_id varchar(128) NOT NULL DEFAULT '' COMMENT 'app_id',
+  external_url varchar(800) NOT NULL DEFAULT '' COMMENT '落地页链接',
+  convert_track_params varchar(800) NOT NULL DEFAULT '' COMMENT '监测参数',
+  convert_base_code varchar(800) NOT NULL DEFAULT '' COMMENT '转化基础代码',
+  convert_js_code varchar(800) NOT NULL DEFAULT '' COMMENT '转化代码（JS方式）',
+  convert_html_code varchar(800) NOT NULL DEFAULT '' COMMENT '转化代码（HTML方式）',
+  convert_xpath_url varchar(800) NOT NULL DEFAULT '' COMMENT '转化页面',
+  convert_xpath_value varchar(800) NOT NULL DEFAULT '' COMMENT '转化路径',
+  open_url varchar(800) NOT NULL DEFAULT '' COMMENT '直达链接',
+  deep_external_action varchar(800) NOT NULL DEFAULT '' COMMENT '深度转化目标',
+  create_time datetime NOT NULL ,
+  update_time datetime NOT NULL
+)
+UNIQUE KEY(advertiser_id,convert_id)
+COMMENT "OLAP"
+DISTRIBUTED BY HASH(advertiser_id,convert_id) BUCKETS 12
+PROPERTIES (
+"storage_type" = "COLUMN",
+ "replication_num" = "2",
+ "in_memory" = "false"
+);
+
 ============================================================
 三 Kafka-Topic 清单
 /usr/local/kafka/bin/kafka-topics.sh --create --topic test-canal-chuangliang-ad --replication-factor 3 --partitions 1 --zookeeper adv-bigdata1:2181,adv-bigdata2:2181,adv-bigdata3:2181
@@ -788,6 +847,8 @@ Canal-DB:
 /usr/local/kafka/bin/kafka-topics.sh --create --replication-factor 3 --partitions 1 --zookeeper adv-bigdata1:2181,adv-bigdata2:2181,adv-bigdata3:2181 --topic test_toutiao_ad_keywords-sink
 /usr/local/kafka/bin/kafka-topics.sh --create --replication-factor 3 --partitions 1 --zookeeper adv-bigdata1:2181,adv-bigdata2:2181,adv-bigdata3:2181 --topic test_toutiao_creative_info-sink
 /usr/local/kafka/bin/kafka-topics.sh --create --replication-factor 3 --partitions 1 --zookeeper adv-bigdata1:2181,adv-bigdata2:2181,adv-bigdata3:2181 --topic test_toutiao_advertiser_daily_fund
+/usr/local/kafka/bin/kafka-topics.sh --create --topic test_toutiao_convert_info-sink --replication-factor 3 --partitions 1 --zookeeper adv-bigdata1:2181,adv-bigdata2:2181,adv-bigdata3:2181
+
 
 File-JSON:
 /usr/local/kafka/bin/kafka-topics.sh --create --replication-factor 3 --partitions 1 --zookeeper adv-bigdata1:2181,adv-bigdata2:2181,adv-bigdata3:2181 --topic test_toutiao_ad_report_data-sink
@@ -804,12 +865,13 @@ File-JSON:
 ============================================================
 四 Doris Create Routine Load
 File-JSON:
-CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_advertiser_report_data_202006081600 ON toutiao_advertiser_report_data
+CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_advertiser_report_data_2020060162040 ON toutiao_advertiser_report_data
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(advertiser_id,stat_datetime,months,days,hours,cost,show_count,avg_show_cost,click,avg_click_cost,ctr,convert_count,convert_cost,convert_rate,deep_convert,deep_convert_cost,deep_convert_rate,attribution_convert,attribution_convert_cost,attribution_deep_convert,attribution_deep_convert_cost,download_start,download_start_cost,download_start_rate,download_finish,download_finish_cost,download_finish_rate,click_install,install_finish,install_finish_cost,install_finish_rate,active,active_cost,active_rate,register,active_register_cost,active_register_rate,next_day_open,next_day_open_cost,next_day_open_rate,attribution_next_day_open_cnt,attribution_next_day_open_cost,attribution_next_day_open_rate,game_addiction,game_addiction_cost,game_addiction_rate,pay_count,active_pay_cost,active_pay_rate,loan_completion,loan_completion_cost,loan_completion_rate,pre_loan_credit,pre_loan_credit_cost,loan_credit,loan_credit_cost,loan_credit_rate,in_app_uv,in_app_detail_uv,in_app_cart,in_app_pay,in_app_order,phone,form,map_search,button,view_count,download,qq,lottery,vote,message,redirect,shopping,consult,wechat,phone_confirm,phone_connect,consult_effective,coupon,coupon_single_page,total_play,valid_play,valid_play_cost,valid_play_rate,play_25_feed_break,play_50_feed_break,play_75_feed_break,play_100_feed_break,average_play_time_per_play,play_over_rate,play_over,wifi_play_rate,wifi_play,play_duration_sum,advanced_creative_phone_click,advanced_creative_counsel_click,advanced_creative_form_click,advanced_creative_coupon_addition,share,comment,like_count,follow,home_visited,ies_challenge_click,ies_music_click,location_click)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -817,16 +879,19 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_toutiao_advertiser_report_data-sink",
-	"property.group.id" = "test_toutiao_advertiser_report_data-sink.gid",
-	"property.client.id" = "test_toutiao_advertiser_report_data-sink.cid"
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "949",
+	"property.group.id" = "test_toutiao_advertiser_report_data-sink-0.gid",
+	"property.client.id" = "test_toutiao_advertiser_report_data-sink-0.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_ad_report_data_202006081700 ON toutiao_ad_report_data
+CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_ad_report_data_202006162040 ON toutiao_ad_report_data
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(advertiser_id,ad_id,stat_datetime,months,days,hours,campaign_id,cost,show_count,avg_show_cost,click,avg_click_cost,ctr,convert_count,convert_cost,convert_rate,deep_convert,deep_convert_cost,deep_convert_rate,attribution_convert,attribution_convert_cost,attribution_deep_convert,attribution_deep_convert_cost,download_start,download_start_cost,download_start_rate,download_finish,download_finish_cost,download_finish_rate,click_install,install_finish,install_finish_cost,install_finish_rate,active,active_cost,active_rate,register,active_register_cost,active_register_rate,next_day_open,next_day_open_cost,next_day_open_rate,attribution_next_day_open_cnt,attribution_next_day_open_cost,attribution_next_day_open_rate,game_addiction,game_addiction_cost,game_addiction_rate,pay_count,active_pay_cost,active_pay_rate,loan_completion,loan_completion_cost,loan_completion_rate,pre_loan_credit,pre_loan_credit_cost,loan_credit,loan_credit_cost,loan_credit_rate,in_app_uv,in_app_detail_uv,in_app_cart,in_app_pay,in_app_order,phone,form,map_search,button,view_count,download,qq,lottery,vote,message,redirect,shopping,consult,wechat,phone_confirm,phone_connect,consult_effective,coupon,coupon_single_page,total_play,valid_play,valid_play_cost,valid_play_rate,play_25_feed_break,play_50_feed_break,play_75_feed_break,play_100_feed_break,average_play_time_per_play,play_over_rate,play_over,wifi_play_rate,wifi_play,play_duration_sum,advanced_creative_phone_click,advanced_creative_counsel_click,advanced_creative_form_click,advanced_creative_coupon_addition,share,comment,like_count,follow,home_visited,ies_challenge_click,ies_music_click,location_click)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -834,16 +899,19 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_toutiao_ad_report_data-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "901",
 	"property.group.id" = "test_toutiao_ad_report_data-sink.gid",
 	"property.client.id" = "test_toutiao_ad_report_data-sink.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_material_report_data_202006081730 ON toutiao_material_report_data
+CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_material_report_data_202006162050 ON toutiao_material_report_data
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS (advertiser_id,ad_id,material_id,inventory,days,stat_datetime,months,campaign_id,cost,show_count,avg_show_cost,click,avg_click_cost,ctr,convert_count,convert_cost,convert_rate,deep_convert,deep_convert_cost,deep_convert_rate,attribution_convert,attribution_convert_cost,attribution_deep_convert,attribution_deep_convert_cost,download_start,download_start_cost,download_start_rate,download_finish,download_finish_cost,download_finish_rate,click_install,install_finish,install_finish_cost,install_finish_rate,active,active_cost,active_rate,register,active_register_cost,active_register_rate,next_day_open,next_day_open_cost,next_day_open_rate,attribution_next_day_open_cnt,attribution_next_day_open_cost,attribution_next_day_open_rate,game_addiction,game_addiction_cost,game_addiction_rate,pay_count,active_pay_cost,active_pay_rate,loan_completion,loan_completion_cost,loan_completion_rate,pre_loan_credit,pre_loan_credit_cost,loan_credit,loan_credit_cost,loan_credit_rate,in_app_uv,in_app_detail_uv,in_app_cart,in_app_pay,in_app_order,phone,form,map_search,button,view_count,download,qq,lottery,vote,message,redirect,shopping,consult,wechat,phone_confirm,phone_connect,consult_effective,coupon,coupon_single_page,total_play,valid_play,valid_play_cost,valid_play_rate,play_25_feed_break,play_50_feed_break,play_75_feed_break,play_100_feed_break,average_play_time_per_play,play_over_rate,play_over,wifi_play_rate,wifi_play ,play_duration_sum,advanced_creative_phone_click,advanced_creative_counsel_click,advanced_creative_form_click,advanced_creative_coupon_addition,share,comment,like_count,follow,home_visited,ies_challenge_click,ies_music_click,location_click)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -851,17 +919,20 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_toutiao_material_report_data-sink",
-	"property.group.id" = "test_toutiao_material_report_data-sink.gid",
-	"property.client.id" = "test_toutiao_material_report_data-sink.cid"
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "793",
+	"property.group.id" = "test_toutiao_material_report_data-sink-1.gid",
+	"property.client.id" = "test_toutiao_material_report_data-sink-1.cid"
 );
 
 DB-TABLE:
-CREATE ROUTINE LOAD test_chuangliang_ad.test_admin_user_202006080900 ON admin_user
+CREATE ROUTINE LOAD test_chuangliang_ad.test_admin_user_202006161945 ON admin_user
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(user_id,project_id,group_id,email,user_name,password,mobile,note,is_lock,parent_id,create_time,create_user_id,update_time,update_user_id,gray_permissions,data_range,is_delete)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -869,16 +940,19 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_admin_user-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "93",
 	"property.group.id" = "test_admin_user-sink.gid",
 	"property.client.id" = "test_admin_user-sink.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_admin_project_202006080900 ON admin_project
+CREATE ROUTINE LOAD test_chuangliang_ad.test_admin_project_202006162005 ON admin_project
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(project_id,project_name,owner_user_id,note,create_time,create_user_id,update_time,update_user_id,is_delete)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -886,16 +960,19 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_admin_project-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "48",
 	"property.group.id" = "test_admin_project-sink.gid",
 	"property.client.id" = "test_admin_project-sink.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_app_202006080900 ON app
+CREATE ROUTINE LOAD test_chuangliang_ad.test_app_202006162000 ON app
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(app_id,app_group_id,app_name,app_key,owner_user_id,package_name,appstore_id,appstore_url,platform,icon_uri,is_active,cost_target_config,create_time,create_user_id,update_time,update_user_id,is_delete)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -903,16 +980,19 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_app-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "68",
 	"property.group.id" = "test_app-sink.gid",
 	"property.client.id" = "test_app-sink.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_material_202006080900 ON material
+CREATE ROUTINE LOAD test_chuangliang_ad.test_material_202006162000 ON material
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(material_id,special_id,copy_material_id,group_id,material_name,material_type,height,width,aspect_ratio,video_duration,thumbnail_uri,file_uri,file_siz,file_direction,file_md5,extra_info,creative_user,make_user,note,owner_user_id,create_time,create_user_id,update_time,update_user_id,is_delete)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -920,16 +1000,19 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_material-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "384",
 	"property.group.id" = "test_material-sink.gid",
 	"property.client.id" = "test_material-sink.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_material_group_202006080900 ON material_group
+CREATE ROUTINE LOAD test_chuangliang_ad.test_material_group_202006161930 ON material_group
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(group_id,group_name,special_id,note,create_time,create_user_id,update_time,update_user_id,is_delete)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -937,33 +1020,39 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_material_group-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "42",
 	"property.group.id" = "test_material_group-sink.gid",
 	"property.client.id" = "test_material_group-sink.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_material_special_202006080900 ON material_special
+CREATE ROUTINE LOAD test_chuangliang_ad.test_material_special_202006162000 ON material_special
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(special_id,special_name,note,owner_user_id,is_open_permission,create_time,create_user_id,update_time,update_user_id,is_delete)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
 FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "38",
 	"kafka_topic" = "test_material_special-sink",
 	"property.group.id" = "test_material_special-sink.gid",
 	"property.client.id" = "test_material_special-sink.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_media_account_202006082000 ON media_account
+CREATE ROUTINE LOAD test_chuangliang_ad.test_media_account_202006162000 ON media_account
 COLUMNS TERMINATED BY "\\x01",
-COLUMNS(media_account_id,parent_id,owner_user_id,media_type,media_agent_id,advertiser_type,advertiser_id,advertiser_name,advertiser_nick,advertiser_source,advertiser_status,develop_app_key,develop_app_secret,access_token,access_token_time,access_token_expires,access_token_retry_times,refresh_token,refresh_token_expires,company,note,create_time,create_user_id,update_time,update_user_id,is_delete,balance,today_cost,yesterday_cost)
+COLUMNS(media_account_id,parent_id,toutiao_parent_id,owner_user_id,media_type,media_agent_id,advertiser_type,advertiser_id,advertiser_name,advertiser_nick,advertiser_source,advertiser_status,develop_app_key,develop_app_secret,access_token,access_token_time,access_token_expires,access_token_retry_times,refresh_token,refresh_token_expires,company,note,create_time,create_user_id,update_time,update_user_id,is_delete,balance,today_cost,yesterday_cost)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -971,16 +1060,19 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_media_account-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "899",
 	"property.group.id" = "test_media_account-sink.gid",
 	"property.client.id" = "test_media_account-sink.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_media_agent_202006080900 ON media_agent
+CREATE ROUTINE LOAD test_chuangliang_ad.test_media_agent_202006162000 ON media_agent
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(media_agent_id,agent_name,agent_company,agent_status,media_type,rebate,note,create_time,owner_user_id,create_user_id,update_time,update_user_id,is_delete)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -988,16 +1080,19 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_media_agent-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "32",
 	"property.group.id" = "test_media_agent-sink.gid",
 	"property.client.id" = "test_media_agent-sink.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_campaign_info_202006081900 ON toutiao_campaign_info
+CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_campaign_info_202006162010 ON toutiao_campaign_info
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(xxx,campaign_id,advertiser_id,name,status,budget_mode,landing_type,budget,campaign_create_time,campaign_modify_time,unique_fk,is_local_create,create_time,update_time)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -1005,16 +1100,19 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_toutiao_campaign_info-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "268884",
 	"property.group.id" = "test_toutiao_campaign_info-new-sink.gid",
 	"property.client.id" = "test_toutiao_campaign_info-new-sink.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_ad_info_202006081800 ON toutiao_ad_info
+CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_ad_info_202006162000 ON toutiao_ad_info
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(id,advertiser_id ,ad_id ,campaign_id ,inventory_type,delivery_range,status,opt_status,name,budget_mode,budget,start_time,end_time,bid,pricing,schedule_type,schedule_time,flow_control_mode,open_url,download_type,download_url,external_url,app_type,union_video_type,package,hide_if_exists,hide_if_converted,cpa_bid,audience,audience_md5,convert_id,deep_bid_type,deep_cpabid,roi_goal,smart_bid_type,adjust_cpa,is_local_create,download_mode,learning_phase,cl_app_id,activity_id,group_id,ad_create_time,ad_modify_time,create_time,update_time)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -1022,16 +1120,19 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_toutiao_ad_info-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "17568",
 	"property.group.id" = "test_toutiao_ad_info-sink.gid",
 	"property.client.id" = "test_toutiao_ad_info-sink.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_inventory_info_202006080900 ON toutiao_inventory_info
+CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_inventory_info_202006162000 ON toutiao_inventory_info
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(inventory_key,inventory_name)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -1039,16 +1140,19 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_toutiao_inventory_info-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "45",
 	"property.group.id" = "test_toutiao_inventory_info-sink.gid",
 	"property.client.id" = "test_toutiao_inventory_info-sink.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_material_info_202006081655 ON toutiao_material_info
+CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_material_info_202006162000 ON toutiao_material_info
 COLUMNS TERMINATED BY "\\x01",
-COLUMNS(xxx,advertiser_id,toutiao_material_id,toutiao_material_str_id,material_type,signature,size,width,height,format,bit_rate,duration,source,update_time)
+COLUMNS(xxx,advertiser_id,toutiao_material_id,toutiao_material_str_id,material_type,signature,size,width,height,format,bit_rate,duration,source,filename,update_time)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -1056,16 +1160,19 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_toutiao_material_info-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "40954",
 	"property.group.id" = "test_toutiao_material_info-sink.gid",
 	"property.client.id" = "test_toutiao_material_info-sink.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_ad_keywords_202006080900 ON toutiao_ad_keywords
+CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_ad_keywords_202006162020 ON toutiao_ad_keywords
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(xxx,advertiser_id,ad_id,ad_keywords,ad_keywords_md5,create_time,update_time)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -1073,16 +1180,19 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_toutiao_ad_keywords-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "10",
 	"property.group.id" = "test_toutiao_ad_keywords-sink.gid",
 	"property.client.id" = "test_toutiao_ad_keywords-sink.cid"
 );
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_creative_info_202006081600 ON toutiao_creative_info
+CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_creative_info_202006162020 ON toutiao_creative_info
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(xxx,advertiser_id,creative_id,ad_id,title,title_md5,creative_word_ids,status,opt_status,third_party_id,image_mode,video_id,image_id,image_ids,create_time,update_time,creative_create_time,creative_modify_time,metarials)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -1090,17 +1200,20 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_toutiao_creative_info-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "236162",
 	"property.group.id" = "test_toutiao_creative_info-202006081500-sink.gid",
 	"property.client.id" = "test_toutiao_creative_info-202006081500-sink.cid"
 );
 
 
-CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_advertiser_daily_fund_202006080900 ON toutiao_advertiser_daily_fund
+CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_advertiser_daily_fund_202006162020 ON toutiao_advertiser_daily_fund
 COLUMNS TERMINATED BY "\\x01",
 COLUMNS(id,advertiser_id,days,balance,cash_cost,cost,frozen,income,reward_cost,return_goods_cost,transfer_in,transfer_out,create_time,update_time)
 PROPERTIES
 ("max_batch_interval" = "5",
     "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
 	"max_batch_size" = "209715200",
 	"strict_mode" = "false"
 )
@@ -1108,6 +1221,29 @@ FROM KAFKA
 (
 	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
 	"kafka_topic" = "test_toutiao_advertiser_daily_fund-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "267",
 	"property.group.id" = "test_toutiao_advertiser_daily_fund-sink.gid",
 	"property.client.id" = "test_toutiao_advertiser_daily_fund-sink.cid"
 );
+
+CREATE ROUTINE LOAD test_chuangliang_ad.test_toutiao_convert_info_202006162030 ON toutiao_convert_info
+COLUMNS TERMINATED BY "\\x01",
+COLUMNS(id,advertiser_id,convert_id,name,opt_status,convert_source_type,status,convert_type,action_track_url,display_track_url,app_type,package_name,download_url,download_url_md5,convert_activate_callback_url,convert_secret_key,app_id,external_url,convert_track_params,convert_base_code,convert_js_code,convert_html_code,convert_xpath_url,convert_xpath_value,open_url,deep_external_action,create_time,update_time)
+PROPERTIES
+("max_batch_interval" = "5",
+    "max_batch_rows" = "300000",
+	"max_error_number" = "20000",
+	"max_batch_size" = "209715200",
+	"strict_mode" = "false"
+)
+FROM KAFKA
+(
+	"kafka_broker_list" = "adv-bigdata1:9092,adv-bigdata2:9092,adv-bigdata3:9092",
+	"kafka_topic" = "test_toutiao_convert_info-sink",
+	"kafka_partitions" = "0",
+	"kafka_offsets" = "9965",
+	"property.group.id" = "test_toutiao_convert_info-sink.gid",
+	"property.client.id" = "test_toutiao_convert_info-sink.cid"
+);
+

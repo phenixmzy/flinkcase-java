@@ -108,7 +108,7 @@ public class ConfigCenterManager {
 
         CONFIG_VALUES.put("canal.chuangliang_ad.media_account", "canal.chuangliang_ad.media_account.table,canal.chuangliang_ad.media_account.fields,canal.chuangliang_ad.media_account.kafka.sink.topic");
         CONFIG_VALUES.put("canal.chuangliang_ad.media_account.table", "media_account");
-        CONFIG_VALUES.put("canal.chuangliang_ad.media_account.fields", "media_account_id,parent_id,owner_user_id,media_type,media_agent_id,advertiser_type,advertiser_id,advertiser_name,advertiser_nick,advertiser_source,advertiser_status,develop_app_key,develop_app_secret,access_token,access_token_time,access_token_expires,access_token_retry_times,refresh_token,refresh_token_expires,company,note,create_time,create_user_id,update_time,update_user_id,is_delete,balance,today_cost,yesterday_cost");
+        CONFIG_VALUES.put("canal.chuangliang_ad.media_account.fields", "media_account_id,parent_id,toutiao_parent_id,owner_user_id,media_type,media_agent_id,advertiser_type,advertiser_id,advertiser_name,advertiser_nick,advertiser_source,advertiser_status,develop_app_key,develop_app_secret,access_token,access_token_time,access_token_expires,access_token_retry_times,refresh_token,refresh_token_expires,company,note,create_time,create_user_id,update_time,update_user_id,is_delete,balance,today_cost,yesterday_cost");
         CONFIG_VALUES.put("canal.chuangliang_ad.media_account.kafka.sink.topic", "test_media_account-sink");
 
         CONFIG_VALUES.put("canal.chuangliang_ad.media_agent", "canal.chuangliang_ad.media_agent.table,canal.chuangliang_ad.media_agent.fields,canal.chuangliang_ad.media_agent.kafka.sink.topic");
@@ -159,8 +159,16 @@ public class ConfigCenterManager {
 
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info", "canal.chuangliang_ad.toutiao_material_info.table,canal.chuangliang_ad.toutiao_material_info.fields,canal.chuangliang_ad.toutiao_material_info.kafka.sink.topic");
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info.table", "toutiao_material_info");
-        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info.fields", "id,advertiser_id,toutiao_material_id,toutiao_material_str_id,material_type,signature,size,width,height,format,bit_rate,duration,source,update_time");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info.fields", "id,advertiser_id,toutiao_material_id,toutiao_material_str_id,material_type,signature,size,width,height,format,bit_rate,duration,source,filename,update_time");
         CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_material_info.kafka.sink.topic", "test_toutiao_material_info-sink");
+
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_convert_info", "canal.chuangliang_ad.toutiao_convert_info.table,canal.chuangliang_ad.toutiao_convert_info.fields,canal.chuangliang_ad.toutiao_convert_info.kafka.sink.topic");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_convert_info.table", "toutiao_convert_info");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_convert_info.fields", "id,advertiser_id,convert_id,name,opt_status,convert_source_type,status,convert_type,action_track_url,display_track_url,app_type,package_name,download_url,download_url_md5,convert_activate_callback_url,convert_secret_key,app_id,external_url,convert_track_params,convert_base_code,convert_js_code,convert_html_code,convert_xpath_url,convert_xpath_value,open_url,deep_external_action,create_time,update_time");
+        CONFIG_VALUES.put("canal.chuangliang_ad.toutiao_convert_info.kafka.sink.topic", "test_toutiao_convert_info-sink");
+
+
+
     }
 
     public static String getConfigValues(String key) {
