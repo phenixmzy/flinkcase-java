@@ -34,7 +34,7 @@ public class FileDataStreamingApplication {
 
     private static ArrayList<String> getTopics(String nameServices) {
         ArrayList<String> topics = new ArrayList<String>();
-        FileConfigCenterManager.test_case_init();
+        FileConfigCenterManager.init();
         //init();
         HashMap<String, ConfigValue> docNameConfigValues = FileConfigCenterManager.getConfigValueByNameSpaces(nameServices.split(","));
         Set<String> docNames = docNameConfigValues.keySet();

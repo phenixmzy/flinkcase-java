@@ -41,7 +41,7 @@ public class FileDataRichMapFunction extends RichMapFunction<String, RecordData>
 
     private void load() {
         //FileConfigCenterManager.init();
-        FileConfigCenterManager.test_case_init();
+        FileConfigCenterManager.init();
         appConfigs.putAll(FileConfigCenterManager.getConfigValueByNameSpaces(this.serviceNames));
         docNameFields.putAll(FileConfigCenterManager.getDocNameFiledsByNameSpaces(this.serviceNames));
     }

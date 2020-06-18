@@ -48,7 +48,7 @@ public class CanalDataFlatRichMapFunction extends RichFlatMapFunction<String, Re
     }
 
     private void reload() {
-        ConfigCenterManager.test_case_init();
+        ConfigCenterManager.init();
         //ConfigCenterManager.init();
         for (String ns : serviceNames) {
             String table = ConfigCenterManager.getConfigValues(ns + ".table");
