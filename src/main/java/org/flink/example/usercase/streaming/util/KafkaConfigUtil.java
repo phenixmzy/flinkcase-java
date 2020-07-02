@@ -61,7 +61,7 @@ public class KafkaConfigUtil {
 
     public static Properties builderKafkaProducerSidePropsForEXACTLYONCE(ParameterTool parameterTool) {
         Properties props = builderKafkaProducerSideProps(parameterTool);
-        //  kafka producer 在使用EXACTLY_ONCE的时候需要增加一些配置
+        //  kafka producer 在使用EXACTLY_ONCE的时候需要增加一些配置（用到了事务）
         props.put(ProducerConfig.TRANSACTION_TIMEOUT_CONFIG, parameterTool.get(PropertiesConstants.KAFKA_TRANSACTION_TIMEOUT_CONFIG_KEY, PropertiesConstants.DEFAULT_KAFKA_TRANSACTION_TIMEOUT_VALUE));
         props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1");
         props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
@@ -196,6 +196,10 @@ public class KafkaConfigUtil {
         return new FlinkKafkaProducer(sinkBrokers, sinkTopic, new SimpleStringSchema());
     }
 
+    /**
+     * 注意,如果使用到kafka事务-TRANSACTION_TIMEOUT_CONFIG,则需要在addSink() 后设置uid()
+     * eg: addSink(buildSinkRecordDataForEXACTLYONCE(parameterTool)).uid("gameplay-sink")
+     * */
     public static FlinkKafkaProducer buildSinkRecordDataForEXACTLYONCE(ParameterTool parameterTool) {
         Properties producerProps = builderKafkaProducerSideProps(parameterTool);
         FlinkKafkaProducer producer = new FlinkKafkaProducer<RecordData>("", new RecordDataKafkaSerialization(),
