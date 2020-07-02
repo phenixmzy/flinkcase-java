@@ -24,7 +24,8 @@ public class FileDataStreamingApplication {
         String nameServices = parameterTool.getRequired(PropertiesConstants.NAME_SERVICES_KEY);
 
         DataStreamSource<String> source = KafkaConfigUtil.buildSource(env, getTopics(nameServices));
-        source.map(new FileDataRichMapFunction(nameServices.split(",")))
+        source.rebalance()
+                .map(new FileDataRichMapFunction(nameServices.split(",")))
                 .filter(rd -> {
                     return rd == null ? false : true;
                 })

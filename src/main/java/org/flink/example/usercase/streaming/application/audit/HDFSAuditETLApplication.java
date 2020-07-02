@@ -19,7 +19,7 @@ public class HDFSAuditETLApplication {
         ParameterTool parameterTool = ExecutionEnvUtil.createParameterTool(args);
         StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);
         DataStreamSource<String> source = KafkaConfigUtil.buildSource(env);
-        source.map(auditLog -> {
+        source.rebalance().map(auditLog -> {
             HDFSAuditEvent event = LogEventsParseUtil.parseHDFSAuditEvent(auditLog);
             return event;
         }).map(event -> GsonUtil.toJson(event))

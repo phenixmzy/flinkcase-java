@@ -19,7 +19,7 @@ public class GamePlayCountWindowByFunApplication {
         ParameterTool parameterTool = ExecutionEnvUtil.createParameterTool(args);
         StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);
         DataStreamSource<String> source = KafkaConfigUtil.buildSource(env);
-        source.map(gamePlayJson -> GsonUtil.fromJson(gamePlayJson, GamePlayEvent.class))
+        source.rebalance().map(gamePlayJson -> GsonUtil.fromJson(gamePlayJson, GamePlayEvent.class))
                 .map(new MapFunction<GamePlayEvent, Tuple3<String,Integer, Integer>>() {
                     @Override
                     public Tuple3<String, Integer, Integer> map(GamePlayEvent value) throws Exception {

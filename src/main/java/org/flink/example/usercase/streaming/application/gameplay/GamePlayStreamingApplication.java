@@ -23,7 +23,7 @@ public class GamePlayStreamingApplication {
         final ParameterTool parameterTool = ExecutionEnvUtil.createParameterTool(args);
         StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);
         DataStreamSource<String> source = KafkaConfigUtil.buildSource(env);
-        source.map(new GamePlayMapFunction())
+        source.rebalance().map(new GamePlayMapFunction())
                 .map(gamePlay -> {
                     String gameId = gamePlay.getGameId();
                     return gameId;
