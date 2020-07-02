@@ -28,7 +28,7 @@ public class FileDataStreamingApplication {
                 .filter(rd -> {
                     return rd == null ? false : true;
                 })
-                .addSink(KafkaConfigUtil.buildSinkRecordData(parameterTool));
+                .addSink(KafkaConfigUtil.buildSinkRecordDataForEXACTLYONCE(parameterTool));
         env.execute("Collect File Json for chuangliang ad");
     }
 
