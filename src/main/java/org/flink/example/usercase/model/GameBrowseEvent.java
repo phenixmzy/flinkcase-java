@@ -9,6 +9,24 @@ public class GameBrowseEvent {
     private String gameType;
     private String channelFrom;
     private String site;
+    private String clientVersion;
+    private String clientDriver;
+
+    public String getClientDriver() {
+        return clientDriver;
+    }
+
+    public void setClientDriver(String clientDriver) {
+        this.clientDriver = clientDriver;
+    }
+
+    public String getClientVersion() {
+        return clientVersion;
+    }
+
+    public void setClientVersion(String clientVersion) {
+        this.clientVersion = clientVersion;
+    }
 
     public String getGameId() {
         return gameId;
