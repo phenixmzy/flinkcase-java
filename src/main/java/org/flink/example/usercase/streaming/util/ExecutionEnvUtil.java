@@ -44,7 +44,7 @@ public class ExecutionEnvUtil {
     public static StreamExecutionEnvironment prepare(ParameterTool parameterTool, TimeCharacteristic timeCharacteristic) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_PARALLELISM_KEY, 5));
-        env.getConfig().setRestartStrategy(RestartStrategies.fixedDelayRestart(4, 10000));
+        env.getConfig().setRestartStrategy(RestartStrategies.fixedDelayRestart(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_FIXED_DELAY_RESTART_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_FIXED_DELAY_RESTART_VAL), 10000));
         if (parameterTool.getBoolean(PropertiesConstants.FLINK_STREAM_CHECKPOINT_ENABLE_KEY, true)) {
             env.enableCheckpointing(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_INTERVAL_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE)); // create a checkpoint every 5 seconds
             env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
