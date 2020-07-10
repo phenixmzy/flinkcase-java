@@ -68,6 +68,9 @@ public class PropertiesConstants {
     public static final String FLINK_STREAM_CHECKPOINT_INTERVAL_KEY = "flink.stream.checkpoint.interval";
     public static final int DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE = 180000;
 
+    public static final String FLINK_TOLERABLE_CHECKPOINT_FAILURE_NUMBER_KEY = "flink.tolerable.checkpoint.failure.number";
+    public static final int DEFAULT_FLINK_TOLERABLE_CHECKPOINT_FAILURE_NUMBER_VAL = 1;
+
     public static final String FLINK_STREAM_CHECKPOINT_TIMEOUT_MS_KEY = "flink.stream.checkpoint.timeout.ms";
 
     public static final String FLINK_STREAM_OPERATOR_THROTTLED_MS_KEY = "flink.stream.operator.throttled.ms";
