@@ -65,11 +65,15 @@ public class PropertiesConstants {
     public static final String FLINK_STREAM_SINK_PARALLELISM_KEY = "flink.stream.sink.parallelism";
     public static final String FLINK_STREAM_DEFAULT_PARALLELISM_KEY = "flink.stream.default.parallelism";
     public static final String FLINK_STREAM_CHECKPOINT_ENABLE_KEY = "flink.stream.checkpoint.enable";
+
     public static final String FLINK_STREAM_CHECKPOINT_INTERVAL_KEY = "flink.stream.checkpoint.interval";
     public static final int DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE = 180000;
 
+    public static final String FLINK_STREAM_FIXED_DELAY_RESTART_KEY = "flink.stream.fixed.delay.restart";
+    public static final int DEFAULT_FLINK_STREAM_FIXED_DELAY_RESTART_VAL = 1;
+
     public static final String FLINK_TOLERABLE_CHECKPOINT_FAILURE_NUMBER_KEY = "flink.tolerable.checkpoint.failure.number";
-    public static final int DEFAULT_FLINK_TOLERABLE_CHECKPOINT_FAILURE_NUMBER_VAL = 1;
+    public static final int DEFAULT_FLINK_TOLERABLE_CHECKPOINT_FAILURE_NUMBER_VAL = 0;
 
     public static final String FLINK_STREAM_CHECKPOINT_TIMEOUT_MS_KEY = "flink.stream.checkpoint.timeout.ms";
 
