@@ -3,12 +3,11 @@ package org.flink.example.usercase.streaming.application.ad;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
-import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 import org.flink.example.common.constant.PropertiesConstants;
-import org.flink.example.usercase.streaming.application.configcenter.ConfigCenterManager;
-import org.flink.example.usercase.streaming.application.configcenter.ConfigValue;
+import org.flink.example.usercase.streaming.application.ad.configcenter.ConfigCenterManager;
+import org.flink.example.usercase.streaming.application.ad.configcenter.ConfigValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
