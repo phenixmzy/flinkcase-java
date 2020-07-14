@@ -4,8 +4,8 @@ import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.flink.example.common.constant.PropertiesConstants;
-import org.flink.example.usercase.streaming.application.configcenter.ConfigValue;
-import org.flink.example.usercase.streaming.application.configcenter.FileConfigCenterManager;
+import org.flink.example.usercase.streaming.application.ad.configcenter.ConfigValue;
+import org.flink.example.usercase.streaming.application.ad.configcenter.FileConfigCenterManager;
 import org.flink.example.usercase.streaming.util.ExecutionEnvUtil;
 import org.flink.example.usercase.streaming.util.KafkaConfigUtil;
 import org.slf4j.Logger;
@@ -24,17 +24,18 @@ public class FileDataStreamingApplication {
         String nameServices = parameterTool.getRequired(PropertiesConstants.NAME_SERVICES_KEY);
 
         DataStreamSource<String> source = KafkaConfigUtil.buildSource(env, getTopics(nameServices));
-        source.map(new FileDataRichMapFunction(nameServices.split(",")))
+        source.rebalance()
+                .map(new FileDataRichMapFunction(nameServices.split(",")))
                 .filter(rd -> {
                     return rd == null ? false : true;
                 })
-                .addSink(KafkaConfigUtil.buildSinkRecordData(parameterTool));
+                .addSink(KafkaConfigUtil.buildSinkRecordDataForEXACTLYONCE(parameterTool));
         env.execute("Collect File Json for chuangliang ad");
     }
 
     private static ArrayList<String> getTopics(String nameServices) {
         ArrayList<String> topics = new ArrayList<String>();
-        FileConfigCenterManager.test_case_init();
+        FileConfigCenterManager.init();
         //init();
         HashMap<String, ConfigValue> docNameConfigValues = FileConfigCenterManager.getConfigValueByNameSpaces(nameServices.split(","));
         Set<String> docNames = docNameConfigValues.keySet();

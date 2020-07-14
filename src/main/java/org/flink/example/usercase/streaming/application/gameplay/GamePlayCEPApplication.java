@@ -16,7 +16,7 @@ public class GamePlayCEPApplication {
         ParameterTool parameterTool = ExecutionEnvUtil.createParameterTool(args);
         StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);
         DataStreamSource<String> source = KafkaConfigUtil.buildSource(env);
-        source.map(new GamePlayMapFunction());
+        source.rebalance().map(new GamePlayMapFunction());
 
         Pattern<GamePlayEvent, GamePlayEvent> gamePlayEvent =
                 Pattern.<GamePlayEvent>begin("start").where(new SimpleCondition<GamePlayEvent>() {

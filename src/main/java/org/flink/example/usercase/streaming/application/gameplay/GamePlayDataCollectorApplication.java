@@ -20,7 +20,7 @@ public class GamePlayDataCollectorApplication {
                 .withBucketAssigner(new JSONEventTimeBucketAssigner("startTime","yyyyMMddHHmm", false))
                 .build();
 
-        KafkaConfigUtil.buildSource(env).addSink(sink);
+        KafkaConfigUtil.buildSource(env).rebalance().addSink(sink);
         env.execute("GamePlay Data Collector Application");
     }
 }

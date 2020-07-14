@@ -27,7 +27,7 @@ public class GamePlayDataCollectorParquetApplication {
                 .withBucketCheckInterval(60000)
                 .build();
 
-        KafkaConfigUtil.buildSource(env)
+        KafkaConfigUtil.buildSource(env).rebalance()
         .map(new MapFunction<String, GamePlayEvent>() {
             @Override
             public GamePlayEvent map(String jsonStr) throws Exception {

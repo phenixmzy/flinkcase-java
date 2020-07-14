@@ -21,7 +21,7 @@ public class CanalDataStreamingApplication {
         DataStreamSource<String> source = KafkaConfigUtil.buildSource(env);
 
         source.flatMap(new CanalDataFlatRichMapFunction(nameServices.split(",")))
-                .addSink(KafkaConfigUtil.buildSinkRecordData(parameterTool));
+                .addSink(KafkaConfigUtil.buildSinkRecordDataForEXACTLYONCE(parameterTool));
 
         env.execute("Streaming name service of config center to kafka");
 

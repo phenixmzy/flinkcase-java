@@ -11,8 +11,7 @@ public class GamePlayEvent {
     private String channelFrom;
     private String site;
     private String clientVersion;
-    private String clientApp;
-
+    private String clientDriver;
 
     public String getGameId() {
         return gameId;
@@ -94,12 +93,12 @@ public class GamePlayEvent {
         this.clientVersion = clientVersion;
     }
 
-    public String getClientApp() {
-        return clientApp;
+    public String getClientDriver() {
+        return clientDriver;
     }
 
-    public void setClientApp(String clientApp) {
-        this.clientApp = clientApp;
+    public void setClientDriver(String clientDriver) {
+        this.clientDriver = clientDriver;
     }
 
   /*  @Override
