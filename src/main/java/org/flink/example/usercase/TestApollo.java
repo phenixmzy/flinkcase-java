@@ -11,11 +11,12 @@ import java.util.Set;
 public class TestApollo {
 
     public static void main(String[] args) {
-        System.setProperty("APOLLO_META", "http://192.168.230.144:8070");
-        Config config = ConfigService.getConfig("collect.canal.cl_ad");
+        System.setProperty("APOLLO_META", "http://localhost:8080");
+        Config config = ConfigService.getConfig("application");
         Set<String> names = config.getPropertyNames();
         for (String name: names) {
             System.out.println(name);
+            System.out.println(config.getProperty(name,"1"));
         }
 
         config.addChangeListener(new ConfigChangeListener() {
