@@ -44,14 +44,15 @@ public class ExecutionEnvUtil {
     public static StreamExecutionEnvironment prepare(ParameterTool parameterTool, TimeCharacteristic timeCharacteristic) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_PARALLELISM_KEY, 5));
-        env.getConfig().setRestartStrategy(RestartStrategies.fixedDelayRestart(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_FIXED_DELAY_RESTART_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_FIXED_DELAY_RESTART_VAL), 10000));
+        //env.setRestartStrategy(RestartStrategies.fixedDelayRestart(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_FIXED_DELAY_RESTART_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_FIXED_DELAY_RESTART_VAL), 10000));
+        env.setRestartStrategy(RestartStrategies.failureRateRestart(3, Time.minutes(5), Time.seconds(10)));
+
         if (parameterTool.getBoolean(PropertiesConstants.FLINK_STREAM_CHECKPOINT_ENABLE_KEY, true)) {
             env.enableCheckpointing(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_INTERVAL_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE)); // create a checkpoint every 5 seconds
             env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
             env.getCheckpointConfig().enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
             env.getCheckpointConfig().setCheckpointTimeout(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_TIMEOUT_MS_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE));
             env.getCheckpointConfig().setTolerableCheckpointFailureNumber(parameterTool.getInt(PropertiesConstants.FLINK_TOLERABLE_CHECKPOINT_FAILURE_NUMBER_KEY,PropertiesConstants.DEFAULT_FLINK_TOLERABLE_CHECKPOINT_FAILURE_NUMBER_VAL));
-            env.setRestartStrategy(RestartStrategies.failureRateRestart(3, Time.minutes(5), Time.seconds(10)));
         }
 
         env.getConfig().setGlobalJobParameters(parameterTool); // make parameters available in the web interface

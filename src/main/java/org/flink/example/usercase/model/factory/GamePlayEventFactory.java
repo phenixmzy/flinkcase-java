@@ -35,7 +35,7 @@ public class GamePlayEventFactory {
         gamePlayEvent.setSite(site);
         gamePlayEvent.setUserIp(userIp);
         gamePlayEvent.setClientVersion(clientVersion);
-        gamePlayEvent.setClientApp(clientApp);
+        gamePlayEvent.setClientDriver(clientApp);
         return gamePlayEvent;
     }
 
