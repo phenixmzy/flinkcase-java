@@ -66,6 +66,8 @@ public class PropertiesConstants {
     public static final String FLINK_STREAM_DEFAULT_PARALLELISM_KEY = "flink.stream.default.parallelism";
     public static final String FLINK_STREAM_CHECKPOINT_ENABLE_KEY = "flink.stream.checkpoint.enable";
 
+    public static final String FLINK_STATE_BACKEND_DIR_KEY = "flink.state.backend.dir";
+
     public static final String FLINK_STREAM_CHECKPOINT_INTERVAL_KEY = "flink.stream.checkpoint.interval";
     public static final int DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE = 180000;
 

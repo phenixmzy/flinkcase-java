@@ -3,6 +3,7 @@ package org.flink.example.usercase.streaming.util;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.runtime.state.filesystem.FsStateBackend;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.environment.CheckpointConfig;
@@ -52,12 +53,11 @@ public class ExecutionEnvUtil {
          * ** noRestart(),
          * ** fixedDelayRestart,
          * ** env.enableCheckpointing
-         *
          * */
         //env.enableCheckpointing(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_INTERVAL_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE)); // create a checkpoint every 5 seconds
         //env.setRestartStrategy(RestartStrategies.noRestart());
-        //env.setRestartStrategy(RestartStrategies.fixedDelayRestart(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_FIXED_DELAY_RESTART_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_FIXED_DELAY_RESTART_VAL), 10000));
-        env.setRestartStrategy(RestartStrategies.failureRateRestart(3, Time.minutes(5), Time.seconds(10)));
+        //env.setRestartStrategy(RestartStrategies.failureRateRestart(3, Time.minutes(5), Time.seconds(10)));
+        env.setRestartStrategy(RestartStrategies.fixedDelayRestart(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_FIXED_DELAY_RESTART_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_FIXED_DELAY_RESTART_VAL), 10000));
 
         if (parameterTool.getBoolean(PropertiesConstants.FLINK_STREAM_CHECKPOINT_ENABLE_KEY, true)) {
             env.enableCheckpointing(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_INTERVAL_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE)); // create a checkpoint every 5 seconds
@@ -66,6 +66,11 @@ public class ExecutionEnvUtil {
             env.getCheckpointConfig().setCheckpointTimeout(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_TIMEOUT_MS_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE));
             env.getCheckpointConfig().setTolerableCheckpointFailureNumber(parameterTool.getInt(PropertiesConstants.FLINK_TOLERABLE_CHECKPOINT_FAILURE_NUMBER_KEY,PropertiesConstants.DEFAULT_FLINK_TOLERABLE_CHECKPOINT_FAILURE_NUMBER_VAL));
         }
+
+        if (parameterTool.getProperties().contains(PropertiesConstants.FLINK_STATE_BACKEND_DIR_KEY)) {
+            env.setStateBackend(new FsStateBackend(parameterTool.getRequired(PropertiesConstants.FLINK_STATE_BACKEND_DIR_KEY)));
+        }
+
 
         env.getConfig().setGlobalJobParameters(parameterTool); // make parameters available in the web interface
         env.setStreamTimeCharacteristic(timeCharacteristic);
