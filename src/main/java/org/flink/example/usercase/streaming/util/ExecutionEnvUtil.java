@@ -60,6 +60,7 @@ public class ExecutionEnvUtil {
         env.setRestartStrategy(RestartStrategies.failureRateRestart(3, Time.minutes(5), Time.seconds(10)));
 
         if (parameterTool.getBoolean(PropertiesConstants.FLINK_STREAM_CHECKPOINT_ENABLE_KEY, true)) {
+            env.enableCheckpointing(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_INTERVAL_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE)); // create a checkpoint every 5 seconds
             env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
             env.getCheckpointConfig().enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
             env.getCheckpointConfig().setCheckpointTimeout(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_TIMEOUT_MS_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE));
