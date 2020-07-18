@@ -1,6 +1,6 @@
 package org.flink.example.usercase.streaming.application.ad;
 
-import org.flink.example.usercase.streaming.application.configcenter.RecordDataConfigValue;
+import org.flink.example.usercase.streaming.application.ad.configcenter.RecordDataConfigValue;
 
 public class FileConfigurationService extends ConfigurationService{
 

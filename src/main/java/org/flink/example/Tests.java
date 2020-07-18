@@ -6,16 +6,11 @@ import java.util.*;
 
 import com.alibaba.fastjson.JSONObject;
 import org.flink.example.common.constant.PropertiesConstants;
-import org.flink.example.usercase.streaming.application.configcenter.ConfigCenterManager;
-import org.flink.example.usercase.streaming.application.configcenter.ConfigValue;
-import org.flink.example.usercase.streaming.application.configcenter.FileConfigCenterManager;
+import org.flink.example.usercase.streaming.application.ad.configcenter.ConfigCenterManager;
+import org.flink.example.usercase.streaming.application.ad.configcenter.ConfigValue;
+import org.flink.example.usercase.streaming.application.ad.configcenter.FileConfigCenterManager;
 
 import java.io.*;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 
 public class Tests {
     private static HashMap<String, ConfigValue> appConfigs = new HashMap<String, ConfigValue>();

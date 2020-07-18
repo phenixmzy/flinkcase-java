@@ -1,4 +1,4 @@
-package org.flink.example.usercase.streaming.application.configcenter;
+package org.flink.example.usercase.streaming.application.ad.configcenter;
 
 import java.util.HashMap;
 

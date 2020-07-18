@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.configuration.Configuration;
 import org.flink.example.common.constant.PropertiesConstants;
-import org.flink.example.usercase.streaming.application.configcenter.ConfigCenterManager;
-import org.flink.example.usercase.streaming.application.configcenter.ConfigValue;
-import org.flink.example.usercase.streaming.application.configcenter.FileConfigCenterManager;
+import org.flink.example.usercase.streaming.application.ad.configcenter.ConfigCenterManager;
+import org.flink.example.usercase.streaming.application.ad.configcenter.ConfigValue;
+import org.flink.example.usercase.streaming.application.ad.configcenter.FileConfigCenterManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;

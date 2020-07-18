@@ -2,9 +2,9 @@ package org.flink.example.usercase.streaming.application.ad;
 
 import com.alibaba.fastjson.JSONObject;
 import org.flink.example.usercase.streaming.apollo.ConfigurationCenterManagerProxy;
-import org.flink.example.usercase.streaming.application.configcenter.ConfigCenterManager;
-import org.flink.example.usercase.streaming.application.configcenter.ConfigValue;
-import org.flink.example.usercase.streaming.application.configcenter.RecordDataConfigValue;
+import org.flink.example.usercase.streaming.application.ad.configcenter.ConfigCenterManager;
+import org.flink.example.usercase.streaming.application.ad.configcenter.ConfigValue;
+import org.flink.example.usercase.streaming.application.ad.configcenter.RecordDataConfigValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
