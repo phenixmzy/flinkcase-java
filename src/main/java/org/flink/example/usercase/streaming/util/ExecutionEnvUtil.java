@@ -63,12 +63,13 @@ public class ExecutionEnvUtil {
             env.enableCheckpointing(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_INTERVAL_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE)); // create a checkpoint every 5 seconds
             env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
             env.getCheckpointConfig().enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+
+            if (parameterTool.getProperties().contains(PropertiesConstants.FLINK_STATE_BACKEND_DIR_KEY)) {
+                env.setStateBackend(new FsStateBackend(parameterTool.getRequired(PropertiesConstants.FLINK_STATE_BACKEND_DIR_KEY)));
+            }
+
             env.getCheckpointConfig().setCheckpointTimeout(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_TIMEOUT_MS_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE));
             env.getCheckpointConfig().setTolerableCheckpointFailureNumber(parameterTool.getInt(PropertiesConstants.FLINK_TOLERABLE_CHECKPOINT_FAILURE_NUMBER_KEY,PropertiesConstants.DEFAULT_FLINK_TOLERABLE_CHECKPOINT_FAILURE_NUMBER_VAL));
-        }
-
-        if (parameterTool.getProperties().contains(PropertiesConstants.FLINK_STATE_BACKEND_DIR_KEY)) {
-            env.setStateBackend(new FsStateBackend(parameterTool.getRequired(PropertiesConstants.FLINK_STATE_BACKEND_DIR_KEY)));
         }
 
 
