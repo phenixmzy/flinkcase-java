@@ -14,6 +14,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * flink-conf.yaml
+ * #配置checkpoint保存个数,减轻存储压力
+ * state.checkpoints.num-retained: 2
+ *
+ * #提升作业恢复速度
+ * state.backend.local-recovery: true
+ * */
 public class ExecutionEnvUtil {
     public static final ParameterTool PARAMETER_TOOL = createParameterTool();
 
@@ -54,12 +62,12 @@ public class ExecutionEnvUtil {
          * ** fixedDelayRestart,
          * ** env.enableCheckpointing
          * */
-        //env.enableCheckpointing(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_INTERVAL_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE)); // create a checkpoint every 5 seconds
+        //env.enableCheckpointing(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_INTERVAL_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE)); // create a checkpoint every 180 seconds
         //env.setRestartStrategy(RestartStrategies.noRestart());
         //env.setRestartStrategy(RestartStrategies.failureRateRestart(3, Time.minutes(5), Time.seconds(10)));
         env.setRestartStrategy(RestartStrategies.fixedDelayRestart(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_FIXED_DELAY_RESTART_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_FIXED_DELAY_RESTART_VAL), 10000));
         if (parameterTool.getBoolean(PropertiesConstants.FLINK_STREAM_CHECKPOINT_ENABLE_KEY, true)) {
-            env.enableCheckpointing(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_INTERVAL_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE)); // create a checkpoint every 5 seconds
+            env.enableCheckpointing(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_INTERVAL_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE)); // create a checkpoint every 180 seconds
             env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
             env.getCheckpointConfig().enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
 
