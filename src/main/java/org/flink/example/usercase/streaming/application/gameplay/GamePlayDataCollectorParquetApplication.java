@@ -13,28 +13,28 @@ import org.flink.example.usercase.streaming.util.ExecutionEnvUtil;
 import org.flink.example.usercase.streaming.util.GsonUtil;
 import org.flink.example.usercase.streaming.util.KafkaConfigUtil;
 
-import org.apache.flink.formats.parquet.avro.ParquetAvroWriters;
+//import org.apache.flink.formats.parquet.avro.ParquetAvroWriters;
 
 public class GamePlayDataCollectorParquetApplication {
-    private final static String TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    public static void main(String[] args) throws Exception {
-        ParameterTool parameterTool = ExecutionEnvUtil.createParameterTool(args);
-        StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);
-
-    final StreamingFileSink sink = StreamingFileSink
-                .forBulkFormat(new Path(parameterTool.getRequired("hdfs.sink.path")), ParquetAvroWriters.forReflectRecord(GamePlayEvent.class))
-                .withBucketAssigner(new DateTimeBucketAssigner("yyyyMMddHH"))
-                .withBucketCheckInterval(60000)
-                .build();
-
-        KafkaConfigUtil.buildSource(env).rebalance()
-        .map(new MapFunction<String, GamePlayEvent>() {
-            @Override
-            public GamePlayEvent map(String jsonStr) throws Exception {
-                return GsonUtil.fromJson(jsonStr, GamePlayEvent.class);
-            }
-        })
-      .addSink(sink);
-        env.execute("GamePlay Data Collector For Parquet Application ");
-    }
+//    private final static String TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+//    public static void main(String[] args) throws Exception {
+//        ParameterTool parameterTool = ExecutionEnvUtil.createParameterTool(args);
+//        StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);
+//
+//    final StreamingFileSink sink = StreamingFileSink
+//                .forBulkFormat(new Path(parameterTool.getRequired("hdfs.sink.path")), ParquetAvroWriters.forReflectRecord(GamePlayEvent.class))
+//                .withBucketAssigner(new DateTimeBucketAssigner("yyyyMMddHH"))
+//                .withBucketCheckInterval(60000)
+//                .build();
+//
+//        KafkaConfigUtil.buildSource(env).rebalance()
+//        .map(new MapFunction<String, GamePlayEvent>() {
+//            @Override
+//            public GamePlayEvent map(String jsonStr) throws Exception {
+//                return GsonUtil.fromJson(jsonStr, GamePlayEvent.class);
+//            }
+//        })
+//      .addSink(sink);
+//        env.execute("GamePlay Data Collector For Parquet Application ");
+//    }
 }
