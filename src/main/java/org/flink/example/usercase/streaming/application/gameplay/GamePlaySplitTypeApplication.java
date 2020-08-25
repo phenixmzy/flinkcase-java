@@ -8,6 +8,7 @@ import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.streaming.api.functions.ProcessFunction;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.apache.flink.util.Collector;
@@ -59,9 +60,7 @@ public class GamePlaySplitTypeApplication {
         final OutputTag<GamePlayEvent> webOutputTag = new OutputTag<>("web", TypeInformation.of(GamePlayEvent.class));
         final OutputTag<GamePlayEvent> onlineOutputTag = new OutputTag<>("online", TypeInformation.of(GamePlayEvent.class));
 
-
-
-        source.map(new MapFunction<String, GamePlayEvent>() {
+        SingleOutputStreamOperator<GamePlayEvent> singleOutputStreamOperator = source.map(new MapFunction<String, GamePlayEvent>() {
 
             @Override
             public GamePlayEvent map(String gamePlayJson) throws Exception {
@@ -74,10 +73,9 @@ public class GamePlaySplitTypeApplication {
             public String getKey(GamePlayEvent gamePlayEvent) throws Exception {
                 return getTag(gamePlayEvent);
             }
-        }).process(new  ProcessFunction<GamePlayEvent, GamePlayEvent>() {
-
+        }).process(new KeyedProcessFunction<String, GamePlayEvent, GamePlayEvent>() {
             @Override
-            public void processElement(GamePlayEvent gamePlayEvent, Context context, Collector<GamePlayEvent> collector) throws Exception {
+            public void processElement(GamePlayEvent gamePlayEvent, Context ctx, Collector<GamePlayEvent> out) throws Exception {
                 OutputTag<GamePlayEvent> outputTag = null;
                 switch (GAMETYPE.valueOf(gamePlayEvent.getGameType())) {
                     case EXT:
@@ -90,9 +88,23 @@ public class GamePlaySplitTypeApplication {
                     case FLASH:
                         outputTag = flashOutputTag;
                 }
-                context.output(outputTag, gamePlayEvent);
+                out.collect(gamePlayEvent);
             }
-        }).map(gamePlayEvent -> gamePlayEvent.toString())
-                .getSideOutput(exeOutputTag).addSink(KafkaConfigUtil.buildSink(parameterTool));
+        });
+        singleOutputStreamOperator.getSideOutput(exeOutputTag).keyBy(new KeySelector<GamePlayEvent, String>() {
+
+            @Override
+            public String getKey(GamePlayEvent gamePlayEvent) throws Exception {
+                return gamePlayEvent.getGameId();
+            }
+        }).sum(1).addSink(KafkaConfigUtil.buildSink(parameterTool));
+
+        singleOutputStreamOperator.getSideOutput(flashOutputTag).keyBy(new KeySelector<GamePlayEvent, String>() {
+
+            @Override
+            public String getKey(GamePlayEvent gamePlayEvent) throws Exception {
+                return gamePlayEvent.getGameId();
+            }
+        }).sum(1).addSink(KafkaConfigUtil.buildSink(parameterTool));
     }
 }
