@@ -30,6 +30,7 @@ public class Tests {
         System.out.println(T.count);
         T.count++;
         System.out.println(T.count);
+        System.out.println(Math.pow(2,32));
         //printDate("2020-06-17" ,365);
         /*
         // 自定义格式化:
