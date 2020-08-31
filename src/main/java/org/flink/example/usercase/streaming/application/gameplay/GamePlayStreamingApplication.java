@@ -15,8 +15,6 @@ import org.flink.example.usercase.streaming.util.ExecutionEnvUtil;
 import org.flink.example.usercase.streaming.util.KafkaConfigUtil;
 
 public class GamePlayStreamingApplication {
-    //private static Logger logger = LoggerFactory.getLogger(GamePlayStreamingApplication.class);
-
     public static void main(String[] args) throws Exception {
         final ParameterTool parameterTool = ExecutionEnvUtil.createParameterTool(args);
         StreamExecutionEnvironment env = ExecutionEnvUtil.prepare(parameterTool);
