@@ -3,44 +3,49 @@ package org.flink.example.usercase.model.factory;
 import org.flink.example.usercase.model.GamePlayEvent;
 
 public class GamePlayEventFactory {
-    private final static String IP_SPLIT = ".";
-    private final static String[] CLIENT_APPS = new String[]{"kuaiwan", "kuaibo", "baidu", "kuwo"};
-    private final static String[] CLIENT_VERSIONS = new String[]{"3.3.12", "2.7.5", "3.2.11", "3.5.25"};
-    private final static String[] gameTypes = new String[]{"exe", "web", "online", "flash"};
-    private final static String[] channelFroms = new String[]{"my","category", "game_helper", "recommend", "762", "4399", "relateflash", "kuwo"};
-    private final static String[] sites = new String[]{"index", "kw", "qvod", "baidu", "tx", "kugo"};
+    private final static SnowFlake snowFlake = new SnowFlake(10L, 20L);
 
-    public static GamePlayEvent makeGamePlay(int gameIdMaxNum, int userIdMaxNum, int maxDelay, int maxTimeLen) {
+    private final static String IP_SPLIT = ".";
+    private static final String[] GAME_TYPES = new String[]{"exe", "web", "onlie", "flash"};
+    private static final String[] CHANNEL_FROMS = new String[]{"my", "category", "game_helper", "recommend", "726", "4399", "kuwo", "relateflash"};
+    private static final String[] SITES = new String[]{"index", "kw", "qvod", "kugo", "qq", "qvod"};
+    private static final String[] CLIENT_VERSIONS = new String[] {"1.6.2","1.8.8","2.31.7","2.5.16","2.7.19","3.2.1","3.1.2","3.4.8"};
+    private static final String[] DRIVERS = new String[] {"PC","MAC PRO","MAC AIR","MI","HUAWEI MateBook","DELL", "LX", "SX", "HP"};
+    private static final String[] VERSIONS = new String[]{"0.1","0.2","0.2.3","1.3.1","2.4","2.5.2","2.8"};
+
+    public static GamePlayEvent build(int gameIdMaxNum, int userIdMaxNum, int maxDelay) {
+
         String gameId = String.valueOf((int)((Math.random()*9+1) * gameIdMaxNum));
         String userId = String.valueOf((long)((Math.random()*9+1) * userIdMaxNum));
         int currTimeStamp = (int)(System.currentTimeMillis()/1000) ;
+
         int delay = getRandNum(1, maxDelay);
-        int timeLen = getRandNum(1, maxTimeLen);
+        int timeLen = getRandNum(1, 300);
         int leaveTime = currTimeStamp - delay;
         int startTime = leaveTime - timeLen;
-        String gameType = gameTypes[getRandNum(0,4) % 4];
-        String clientApp = CLIENT_APPS[getRandNum(0,4) % 4];
-        String clientVersion = CLIENT_VERSIONS[getRandNum(0,4) % 4];
-        String channelFrom = channelFroms[getRandNum(0,8) % 8];
-        String site = sites[getRandNum(0,6) % 6];
+        String gameType = GAME_TYPES[getRandNum(0,4) % 4];
+        String channelFrom = CHANNEL_FROMS[getRandNum(0,8) % 8];
+        String site = SITES[getRandNum(0,6) % 6];
         String userIp = getUserIp();
+        String clientVersion = CLIENT_VERSIONS[getRandNum(0,CLIENT_VERSIONS.length)%CLIENT_VERSIONS.length];
+        String version = VERSIONS[getRandNum(0,VERSIONS.length)%VERSIONS.length];
+        String driver = DRIVERS[getRandNum(0, DRIVERS.length)%DRIVERS.length];
 
         GamePlayEvent gamePlayEvent = new GamePlayEvent();
+        gamePlayEvent.setTxId(snowFlake.nextId());
         gamePlayEvent.setGameId(gameId);
         gamePlayEvent.setUserId(userId);
+        gamePlayEvent.setTimeLen(timeLen);
         gamePlayEvent.setStartTime(startTime);
         gamePlayEvent.setLeaveTime(leaveTime);
         gamePlayEvent.setGameType(gameType);
-        gamePlayEvent.setChannelFrom(channelFrom);
         gamePlayEvent.setSite(site);
+        gamePlayEvent.setChannelFrom(channelFrom);
         gamePlayEvent.setUserIp(userIp);
         gamePlayEvent.setClientVersion(clientVersion);
-        gamePlayEvent.setClientDriver(clientApp);
+        gamePlayEvent.setVersion(version);
+        gamePlayEvent.setDriver(driver);
         return gamePlayEvent;
-    }
-
-    private static int getRandNum(int min, int max)  {
-        return (int)(Math.random()*(max-min)+min);
     }
 
     public static String getUserIp() {
@@ -52,9 +57,7 @@ public class GamePlayEventFactory {
         return builder.toString();
     }
 
-    public static void main(String[] args) {
-        GamePlayEvent envent = makeGamePlay(10000, 10000000, 300, 300);
-        System.out.println("gameId="+envent.getGameId() + " userId=" + envent.getUserId() + " userIp=" + envent.getUserIp()+ " startTime=" + envent.getStartTime() + " channelFrom=" + envent.getChannelFrom() + " gameType=" + envent.getGameType());
+    private static int getRandNum(int min, int max) {
+        return (int)(Math.random() * (max - min) + min);
     }
-
 }

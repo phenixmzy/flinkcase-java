@@ -3,35 +3,43 @@ package org.flink.example.usercase.model.factory;
 import org.flink.example.usercase.model.GameBrowseEvent;
 
 public class GameBrowseEventFactory {
+    private final static SnowFlake snowFlake = new SnowFlake(10L, 30L);
     private final static String IP_SPLIT = ".";
-    private final static String[] gameTypes = new String[]{"exe", "web", "online", "flash"};
-    private final static String[] channelFroms = new String[]{"my","category", "game_helper", "recommend", "762", "4399", "relateflash", "kuwo"};
-    private final static String[] sites = new String[]{"index", "kw", "qvod", "baidu", "tx", "kugo"};
+    private static final String[] GAME_TYPES = new String[]{"exe", "web", "onlie", "flash"};
+    private static final String[] CHANNEL_FROMS = new String[]{"my", "category", "game_helper", "recommend", "726", "4399", "kuwo", "relateflash"};
+    private static final String[] SITES = new String[]{"index", "kw", "qvod", "kugo", "qq", "qvod"};
+    private static final String[] CLIENT_VERSIONS = new String[] {"1.6.2","1.8.8","2.31.7","2.5.16","2.7.19","3.2.1","3.1.2","3.4.8"};
+    private static final String[] DRIVERS = new String[] {"PC","MAC PRO","MAC AIR","MI","HUAWEI MateBook","DELL", "LX", "SX", "HP"};
+    private static final String[] VERSIONS = new String[]{"0.1","0.2","0.2.3","1.3.1","2.4","2.5.2","2.8"};
 
-    public static GameBrowseEvent makeGameBrowseEvent(int gameIdMaxNum, int userIdMaxNum, int maxDelay, int maxTimeLen) {
+    public static GameBrowseEvent build(int gameIdMaxNum, int userIdMaxNum, int maxDelay) {
         String gameId = String.valueOf((int)((Math.random()*9+1) * gameIdMaxNum));
         String userId = String.valueOf((long)((Math.random()*9+1) * userIdMaxNum));
         int currTimeStamp = (int)(System.currentTimeMillis()/1000) ;
-        int delay = getRandNum(1, maxDelay);
-        int timeLen = getRandNum(1, maxTimeLen);
-        String gameType = gameTypes[getRandNum(0,4) % 4];
-        String channelFrom = channelFroms[getRandNum(0,8) % 8];
-        String site = sites[getRandNum(0,6) % 6];
+
+        int timeLen = getRandNum(1, 300);
+        String gameType = GAME_TYPES[getRandNum(0,4) % 4];
+        String channelFrom = CHANNEL_FROMS[getRandNum(0,8) % 8];
+        String site = SITES[getRandNum(0,6) % 6];
         String userIp = getUserIp();
+        String clientVersion = CLIENT_VERSIONS[getRandNum(0,CLIENT_VERSIONS.length)%CLIENT_VERSIONS.length];
+        String version = VERSIONS[getRandNum(0,VERSIONS.length)%VERSIONS.length];
+        String driver = DRIVERS[getRandNum(0, DRIVERS.length)%DRIVERS.length];
 
-        GameBrowseEvent gameBrowseEvent = new GameBrowseEvent();
-        gameBrowseEvent.setGameId(gameId);
-        gameBrowseEvent.setUserId(userId);
-        gameBrowseEvent.setBrowseTime(currTimeStamp);
-        gameBrowseEvent.setGameType(gameType);
-        gameBrowseEvent.setChannelFrom(channelFrom);
-        gameBrowseEvent.setSite(site);
-        gameBrowseEvent.setUserIp(userIp);
-        return gameBrowseEvent;
-    }
-
-    private static int getRandNum(int min, int max)  {
-        return (int)(Math.random()*(max-min)+min);
+        GameBrowseEvent browse = new GameBrowseEvent();
+        browse.setTxId(snowFlake.nextId());
+        browse.setGameId(gameId);
+        browse.setUserId(userId);
+        browse.setTimeLen(timeLen);
+        browse.setBrowseTime(currTimeStamp);
+        browse.setGameType(gameType);
+        browse.setSite(site);
+        browse.setChannelFrom(channelFrom);
+        browse.setUserIp(userIp);
+        browse.setClientVersion(clientVersion);
+        browse.setVersion(version);
+        browse.setDriver(driver);
+        return browse;
     }
 
     public static String getUserIp() {
@@ -43,9 +51,8 @@ public class GameBrowseEventFactory {
         return builder.toString();
     }
 
-    public static void main(String[] args) {
-        GameBrowseEvent envent = new GameBrowseEvent();
-        System.out.println("gameId="+envent.getGameId() + " userId=" + envent.getUserId() + " userIp=" + envent.getUserIp()+ " browseTime=" + envent.getBrowseTime() + " channelFrom=" + envent.getChannelFrom() + " gameType=" + envent.getGameType());
+    private static int getRandNum(int min, int max) {
+        return (int)(Math.random() * (max - min) + min);
     }
 
 }
