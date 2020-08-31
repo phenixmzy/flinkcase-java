@@ -24,7 +24,7 @@ public class GameBrowseEventSource implements SourceFunction<GameBrowseEvent> {
     public void run(SourceContext sourceContext) throws Exception {
         while (isRunning) {
             Thread.sleep(50);
-            GameBrowseEvent event = GameBrowseEventFactory.makeGameBrowseEvent(this.gameIdMaxNum, this.userIdMaxNum, this.maxDelay, this.maxTimeLen);
+            GameBrowseEvent event = GameBrowseEventFactory.build(this.gameIdMaxNum, this.userIdMaxNum, this.maxDelay);
             for(int i = 0; i < recordMaxNum; i++) {
                 sourceContext.collect(event);
             }

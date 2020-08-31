@@ -33,13 +33,13 @@ public class GamePlayCCMapFunction extends RichMapFunction<GamePlayEvent, String
     }
 
     private void init() {
-        proxy = new ConfigurationCenterManagerProxy(this.namespace);
+        /*proxy = new ConfigurationCenterManagerProxy(this.namespace);*/
     }
 
 
     @Override
     public String map(GamePlayEvent gamePlayEvent) throws Exception {
-        return proxy.getValue("fields");
+        return null;//proxy.getValue("fields");
     }
 
     @Override

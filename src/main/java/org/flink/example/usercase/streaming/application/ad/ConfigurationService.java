@@ -17,7 +17,7 @@ import java.util.HashMap;
  * docName.kafka.sink.topic
  * */
 public abstract class ConfigurationService implements ConfigurationChange{
-    protected final static String CONFIG_CENTER_DATA_FIELDS_KEY = "fields";
+   /* protected final static String CONFIG_CENTER_DATA_FIELDS_KEY = "fields";
     protected final static String CONFIG_CENTER_KAFKA_SOURCE_TOPIC_KEY = "kafka.source.topic";
     protected final static String CONFIG_CENTER_KAFKA_SINK_TOPIC_KEY = "kafka.sink.topic";
     protected final static String CONFIG_CENTER_FIELDS_COMM_FLAG = ",";
@@ -95,5 +95,5 @@ public abstract class ConfigurationService implements ConfigurationChange{
 
     public ConfigValue getRecordDataConfigValue(String recordDataName) {
         return docAttrs.get(recordDataName).getCv();
-    }
+    }*/
 }

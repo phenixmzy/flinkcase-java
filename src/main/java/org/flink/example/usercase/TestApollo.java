@@ -1,17 +1,17 @@
 package org.flink.example.usercase;
 
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigChangeListener;
-import com.ctrip.framework.apollo.ConfigService;
-import com.ctrip.framework.apollo.model.ConfigChange;
-import com.ctrip.framework.apollo.model.ConfigChangeEvent;
+//import com.ctrip.framework.apollo.Config;
+//import com.ctrip.framework.apollo.ConfigChangeListener;
+//import com.ctrip.framework.apollo.ConfigService;
+//import com.ctrip.framework.apollo.model.ConfigChange;
+//import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 
 import java.util.Set;
 
 public class TestApollo {
 
     public static void main(String[] args) {
-        System.setProperty("APOLLO_META", "http://localhost:8080");
+        /*System.setProperty("APOLLO_META", "http://localhost:8080");
         Config config = ConfigService.getConfig("application");
         Set<String> names = config.getPropertyNames();
         for (String name: names) {
@@ -27,6 +27,6 @@ public class TestApollo {
                     System.out.println(key + ":" +change.getNewValue());
                 }
             }
-        });
+        });*/
     }
 }

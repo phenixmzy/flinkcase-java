@@ -24,7 +24,7 @@ public class GamePlayEventSource implements SourceFunction<GamePlayEvent> {
     public void run(SourceContext sourceContext) throws Exception {
         while (isRunning) {
             Thread.sleep(50);
-            GamePlayEvent event = GamePlayEventFactory.makeGamePlay(this.gameIdMaxNum, this.userIdMaxNum, this.maxDelay, this.maxTimeLen);
+            GamePlayEvent event = GamePlayEventFactory.build(this.gameIdMaxNum, this.userIdMaxNum, this.maxDelay);
             for(int i = 0; i < recordMaxNum; i++) {
                 sourceContext.collect(event);
             }
