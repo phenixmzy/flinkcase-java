@@ -14,11 +14,6 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.flink.example.usercase.streaming.util.ExecutionEnvUtil;
 import org.flink.example.usercase.streaming.util.KafkaConfigUtil;
 
-class GamePlayCount {
-    public String gameId;
-    public int count;
-}
-
 public class GamePlayStreamingApplication {
     //private static Logger logger = LoggerFactory.getLogger(GamePlayStreamingApplication.class);
 
