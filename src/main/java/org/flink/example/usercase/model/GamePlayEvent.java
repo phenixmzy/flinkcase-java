@@ -1,6 +1,7 @@
 package org.flink.example.usercase.model;
 
 public class GamePlayEvent {
+    private long txId;
     private String gameId;
     private String userId;
     private int startTime;
@@ -11,7 +12,16 @@ public class GamePlayEvent {
     private String channelFrom;
     private String site;
     private String clientVersion;
-    private String clientDriver;
+    private String version;
+    private String driver;
+
+    public long getTxId() {
+        return txId;
+    }
+
+    public void setTxId(long txId) {
+        this.txId = txId;
+    }
 
     public String getGameId() {
         return gameId;
@@ -93,13 +103,25 @@ public class GamePlayEvent {
         this.clientVersion = clientVersion;
     }
 
-    public String getClientDriver() {
-        return clientDriver;
+    public String getVersion() {
+        return version;
     }
 
-    public void setClientDriver(String clientDriver) {
-        this.clientDriver = clientDriver;
+    public void setVersion(String version) {
+        this.version = version;
     }
+
+    public String getDriver() {
+        return driver;
+    }
+
+    public void setDriver(String driver) {
+        this.driver = driver;
+    }
+
+
+
+
 
   /*  @Override
     public boolean equals(Object o) {
