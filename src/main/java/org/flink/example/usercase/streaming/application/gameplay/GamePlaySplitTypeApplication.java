@@ -88,6 +88,7 @@ public class GamePlaySplitTypeApplication {
                     case FLASH:
                         outputTag = flashOutputTag;
                 }
+                ctx.output(outputTag,gamePlayEvent);
                 out.collect(gamePlayEvent);
             }
         });
