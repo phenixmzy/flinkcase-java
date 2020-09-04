@@ -204,7 +204,8 @@ public class KafkaConfigUtil {
      *
      * 2. Flink以外部实现end-to-end EXACTLYONCE语义的前提需要外部存储系统支持事务，这里需要使用kafka TRANSACTION 特性，
      * 也因此 flink 实现ProducerSink 到 外部kafka 实现 EXACTLYONCE语义可能.当flink任务出现故障时，
-     * 主要是使用FlinkKafkaInternalProducer实现 FlinkProducer 的事务回放.
+     * 主要是使用org.apache.flink.streaming.connectors.kafka.internal.FlinkKafkaInternalProducer.resumeTransaction()
+     * 实现 FlinkProducer 的事务回放.
      * 这里的容错实现主要是 通过一个map 保存 一对 kv，key= checkpoint_id , value= (transaction_io, producer_id, epoch, FlinkProducer引用)
      * 保存到外部状态，并且flush data 到 kafka 后在完成checkpoint 后，由checkpointlistener 通知，再进行offset的commit.
      * */
