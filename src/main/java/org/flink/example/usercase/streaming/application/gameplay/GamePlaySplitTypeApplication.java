@@ -34,7 +34,7 @@ enum GAMETYPE {
 
 public class GamePlaySplitTypeApplication {
 
-    private static String getTag(GamePlayEvent gamePlayEvent) {
+    private static String getTagKey(GamePlayEvent gamePlayEvent) {
         String tag = null;
         switch (GAMETYPE.valueOf(gamePlayEvent.getGameType())) {
             case EXT:
@@ -42,8 +42,10 @@ public class GamePlaySplitTypeApplication {
                 break;
             case ONLINE:
                 tag = GAMETYPE.ONLINE.getGameType();
+                break;
             case WEB:
                 tag = GAMETYPE.WEB.getGameType();
+                break;
             case FLASH:
                 tag = GAMETYPE.FLASH.getGameType();
         }
@@ -71,7 +73,7 @@ public class GamePlaySplitTypeApplication {
 
             @Override
             public String getKey(GamePlayEvent gamePlayEvent) throws Exception {
-                return getTag(gamePlayEvent);
+                return getTagKey(gamePlayEvent);
             }
         }).process(new KeyedProcessFunction<String, GamePlayEvent, GamePlayEvent>() {
             @Override
@@ -83,8 +85,10 @@ public class GamePlaySplitTypeApplication {
                         break;
                     case ONLINE:
                         outputTag = onlineOutputTag;
+                        break;
                     case WEB:
                         outputTag = webOutputTag;
+                        break;
                     case FLASH:
                         outputTag = flashOutputTag;
                 }
@@ -98,14 +102,11 @@ public class GamePlaySplitTypeApplication {
             public String getKey(GamePlayEvent gamePlayEvent) throws Exception {
                 return gamePlayEvent.getGameId();
             }
-        }).sum(1).addSink(KafkaConfigUtil.buildSink(parameterTool));
-
-        singleOutputStreamOperator.getSideOutput(flashOutputTag).keyBy(new KeySelector<GamePlayEvent, String>() {
-
-            @Override
-            public String getKey(GamePlayEvent gamePlayEvent) throws Exception {
-                return gamePlayEvent.getGameId();
-            }
-        }).sum(1).addSink(KafkaConfigUtil.buildSink(parameterTool));
+        }).map(item ->{
+            StringBuilder builder = new StringBuilder(item.getGameType());
+            builder.append("-").append(item.getGameId());
+            return builder.toString();
+        }).addSink(KafkaConfigUtil.buildSink(parameterTool));
+        env.execute("Data Stream Split");
     }
 }
