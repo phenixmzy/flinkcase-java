@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GamePlayJoinDimHBaseApplication {
     public static void main(String[] args) throws Exception{
-        AsyncFunction<String, GameInfo> function = new GameInfoDimHBaseAsyncFunction("zk", "zkPort", "hTable");
+        AsyncFunction<String, String> function = new GameInfoDimHBaseAsyncFunction("zk", "zkPort", "hTable");
 
         ParameterTool parameterTool = ExecutionEnvUtil.createParameterTool(args);
         StreamExecutionEnvironment env =  ExecutionEnvUtil.prepare(parameterTool);
