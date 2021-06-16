@@ -135,9 +135,9 @@ public class KafkaConfigUtil {
     }
 
     public static FlinkKafkaProducer buildSink(ParameterTool parameterTool) {
-        String sinkBrokers = parameterTool.get(PropertiesConstants.KAFKA_SINK_BROKERS_KEY, parameterTool.get(PropertiesConstants.KAFKA_BROKERS_KEY));
+        Properties properties = builderKafkaProducerSideProps(parameterTool);
         String sinkTopic = parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY);
-        return new FlinkKafkaProducer(sinkBrokers, sinkTopic, new SimpleStringSchema());
+        return new FlinkKafkaProducer(sinkTopic, new SimpleStringSchema(), properties);
     }
 
     /**
