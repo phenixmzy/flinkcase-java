@@ -2,12 +2,14 @@ package org.flink.example.usercase.streaming.util;
 
 import org.apache.flink.api.common.io.ratelimiting.FlinkConnectorRateLimiter;
 import org.apache.flink.api.common.io.ratelimiting.GuavaFlinkConnectorRateLimiter;
+
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
+import org.apache.flink.streaming.connectors.kafka.KafkaSerializationSchema;
 import org.apache.flink.streaming.connectors.kafka.internals.KafkaTopicPartition;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -37,6 +39,9 @@ public class KafkaConfigUtil {
         props.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, "524288000");
         props.put(ConsumerConfig.FETCH_MIN_BYTES_CONFIG, "100000");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+        props.setProperty("security.protocol","SASL_PLAINTEXT");
+        props.setProperty("sasl.mechanism","GSSAPI");
+        props.setProperty("sasl.kerberos.service.name","kafka");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, parameterTool.get(PropertiesConstants.KAFKA_KEY_DESERIALIZER_KEY, PropertiesConstants.DEFAULT_KAFKA_KEY_DESERIALIZER_VALUE));
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, parameterTool.get(PropertiesConstants.KAFKA_VALUE_DESERIALIZER_KEY, PropertiesConstants.DEFAULT_KAFKA_VALUE_DESERIALIZER_VALUE));
         props.put(ConsumerConfig.GROUP_ID_CONFIG, parameterTool.get(PropertiesConstants.KAFKA_GROUP_ID_KEY, PropertiesConstants.DEFAULT_KAFKA_GROUP_ID_VALUE));
@@ -54,6 +59,9 @@ public class KafkaConfigUtil {
         props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "134217728");
         props.put(ProducerConfig.SEND_BUFFER_CONFIG, "134217728");
         props.put(ProducerConfig.BUFFER_MEMORY_CONFIG, "134217728");
+        props.setProperty("security.protocol","SASL_PLAINTEXT");
+        props.setProperty("sasl.mechanism","GSSAPI");
+        props.setProperty("sasl.kerberos.service.name","kafka");
         props.put(ProducerConfig.RETRIES_CONFIG, parameterTool.get(PropertiesConstants.KAFKA_RETRIES_CONFIG_KEY, PropertiesConstants.DEFAULT_KAFKA_RETRIES_CONFIG_VALUE));
         return props;
     }
@@ -70,7 +78,7 @@ public class KafkaConfigUtil {
 
     public static Properties buildkafkaProps(ParameterTool parameterTool) {
         Properties props = parameterTool.getProperties();
-        props.put("zookeeper.connect", parameterTool.get(PropertiesConstants.KAFKA_ZOOKEEPER_CONNECT_KEY, PropertiesConstants.DEFAULT_KAFKA_ZOOKEEPER_CONNECT_VALUE));
+        //props.put("zookeeper.connect", parameterTool.get(PropertiesConstants.KAFKA_ZOOKEEPER_CONNECT_KEY, PropertiesConstants.DEFAULT_KAFKA_ZOOKEEPER_CONNECT_VALUE));
         props.put("group.id", parameterTool.get(PropertiesConstants.KAFKA_GROUP_ID_KEY, PropertiesConstants.DEFAULT_KAFKA_GROUP_ID_VALUE));
         props.put("key.deserializer", parameterTool.get(PropertiesConstants.KAFKA_KEY_DESERIALIZER_KEY, PropertiesConstants.DEFAULT_KAFKA_KEY_DESERIALIZER_VALUE));
         props.put("value.deserializer", parameterTool.get(PropertiesConstants.KAFKA_VALUE_DESERIALIZER_KEY, PropertiesConstants.DEFAULT_KAFKA_VALUE_DESERIALIZER_VALUE));
@@ -88,6 +96,9 @@ public class KafkaConfigUtil {
         props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "134217728");
         props.put(ProducerConfig.SEND_BUFFER_CONFIG, "134217728");
         props.put(ProducerConfig.BUFFER_MEMORY_CONFIG, "134217728");
+        props.setProperty("security.protocol","SASL_PLAINTEXT");
+        props.setProperty("sasl.mechanism","GSSAPI");
+        props.setProperty("sasl.kerberos.service.name","kafka");
         return props;
     }
 
@@ -137,6 +148,7 @@ public class KafkaConfigUtil {
     public static FlinkKafkaProducer buildSink(ParameterTool parameterTool) {
         Properties properties = builderKafkaProducerSideProps(parameterTool);
         String sinkTopic = parameterTool.getRequired(PropertiesConstants.KAFKA_SINK_TOPIC_KEY);
+
         return new FlinkKafkaProducer(sinkTopic, new SimpleStringSchema(), properties);
     }
 

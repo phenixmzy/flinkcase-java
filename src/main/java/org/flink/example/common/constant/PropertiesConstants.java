@@ -26,7 +26,7 @@ public class PropertiesConstants {
     public static final String DEFAULT_KAFKA_ZOOKEEPER_CONNECT_VALUE = "localhost:2181";
 
     public static final String KAFKA_GROUP_ID_KEY = "kafka.group.id";
-    public static final String DEFAULT_KAFKA_GROUP_ID_VALUE = "group-chuangliang-ad";
+    public static final String DEFAULT_KAFKA_GROUP_ID_VALUE = "group-data-service";
 
     public static final String KAFKA_KEY_SERIALIZER_KEY = "kafka.key.serializer";
     public static final String DEFAULT_KAFKA_KEY_SERIALIZER_VALUE = "org.apache.kafka.common.serialization.StringSerializer";
