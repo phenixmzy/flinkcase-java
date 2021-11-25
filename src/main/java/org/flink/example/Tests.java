@@ -25,12 +25,22 @@ public class Tests {
     //private static HashMap<String, ArrayList<String>> tableFields = new HashMap<String, ArrayList<String>>();
 
     public static void main(String[] args) throws Exception {
-        System.out.println(T.count);
-        T.count++;
-        System.out.println(T.count);
-        T.count++;
-        System.out.println(T.count);
-        System.out.println(Math.pow(2,32));
+        try {
+            File file = new File("D:\\test", "xasecure-audit.xml");
+            if(!file.exists()){
+                System.out.println("file.mkdirs()");
+                file.mkdirs();
+
+                System.out.println("file.createNewFile()");
+                file.createNewFile();
+            } else {
+                System.out.println("file.exists()");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         //printDate("2020-06-17" ,365);
         /*
         // 自定义格式化:

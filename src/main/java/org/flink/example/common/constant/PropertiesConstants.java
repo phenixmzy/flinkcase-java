@@ -60,6 +60,10 @@ public class PropertiesConstants {
     public static final String KAFKA_REQUEST_TIMEOUT_MS_KEY = "kafka.request.timeout.ms";
     public static final String  DEFAULT_KAFKA_REQUEST_TIMEOUT_MS_VALUE = "420000";
 
+    public static final String KAFKA_SECURITY_KERBEROS = "kafka.security.kerberos";
+    public static final boolean DEFAULT_KAFKA_SECURITY_KERBEROS_VALUE = false;
+
+
     // flink config
     public static final String FLINK_STREAM_PARALLELISM_KEY = "flink.stream.parallelism";
     public static final String FLINK_STREAM_SINK_PARALLELISM_KEY = "flink.stream.sink.parallelism";
@@ -75,7 +79,7 @@ public class PropertiesConstants {
     public static final int DEFAULT_FLINK_STREAM_FIXED_DELAY_RESTART_VAL = 1;
 
     public static final String FLINK_TOLERABLE_CHECKPOINT_FAILURE_NUMBER_KEY = "flink.tolerable.checkpoint.failure.number";
-    public static final int DEFAULT_FLINK_TOLERABLE_CHECKPOINT_FAILURE_NUMBER_VAL = 0;
+    public static final int DEFAULT_FLINK_TOLERABLE_CHECKPOINT_FAILURE_NUMBER_VAL = 2;
 
     public static final String FLINK_STREAM_CHECKPOINT_TIMEOUT_MS_KEY = "flink.stream.checkpoint.timeout.ms";
 

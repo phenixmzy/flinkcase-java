@@ -30,7 +30,8 @@ under the License.
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<flink.version>1.12.4</flink.version>
+		<flink.version>1.13.2</flink.version>
+		<flink.cdc.version>2.1.0</flink.cdc.version>
 		<java.version>1.8</java.version>
 		<scala.binary.version>2.12</scala.binary.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
@@ -47,6 +48,8 @@ under the License.
 		<orc.version>1.5.2</orc.version>
 		<slf4j-log4j12.version>1.7.7</slf4j-log4j12.version>
 		<log4j.version>1.2.17</log4j.version>
+		<mysql-connector.version>5.1.46</mysql-connector.version>
+		<hutool.version>5.7.15</hutool.version>
 		<!--
 		<jackson-databind.version>2.12.0</jackson-databind.version>
 		<kafka-clients.version>2.6.0</kafka-clients.version>
@@ -265,6 +268,54 @@ under the License.
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-parquet_2.12</artifactId>
+			<version>${flink.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-orc_2.12</artifactId>
+			<version>${flink.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ververica</groupId>
+			<artifactId>flink-connector-mysql-cdc</artifactId>
+			<version>${flink.cdc.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.ververica</groupId>
+			<artifactId>flink-connector-postgres-cdc</artifactId>
+			<!-- the dependency is available only for stable releases. -->
+			<version>${flink.cdc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ververica</groupId>
+			<artifactId>flink-connector-oracle-cdc</artifactId>
+			<!-- the dependency is available only for stable releases. -->
+			<version>${flink.cdc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql-connector.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.hutool</groupId>
+			<artifactId>hutool-all</artifactId>
+			<version>${hutool.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.ua-parser</groupId>
+			<artifactId>uap-java</artifactId>
+			<version>1.5.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>

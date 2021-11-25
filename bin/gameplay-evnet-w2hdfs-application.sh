@@ -13,10 +13,9 @@ export FLINK_HOME=/opt/cloudera/parcels/FLINK/lib/flink
         -Dsecurity.kerberos.login.principal=flink@JDY.KD.INTERNAL \
         -Djava.security.krb5.conf=/etc/krb5.conf \
         -Djava.security.auth.login.config=/var/data/service/keytabs/flink_jaas.conf \
-        -c org.flink.example.usercase.streaming.application.gameplay.GamePlayEventETLStreamingApplication \
+        -c org.flink.example.usercase.streaming.application.gameplay.GamePlayEventWriteHDFSApplication \
         /home/kduser/flinkcase-java/flinkcase-java-0.0.1.jar \
         --kafka.source.topic gameplay \
 	    --bootstrap.servers yzj-client-01:9092,yzj-client-02:9092,yzj-client-03:9092 \
-	    --kafka.sink.topic gameplay-etl-out \
-	    --kafka.sink.brokers yzj-client-01:9092,yzj-client-02:9092,yzj-client-03:9092 \
+        --gameplay.output.path hdfs://xxx:8020/gameplay/output/
         --task-num 2

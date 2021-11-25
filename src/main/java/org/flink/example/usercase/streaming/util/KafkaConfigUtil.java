@@ -21,6 +21,7 @@ import org.flink.example.common.constant.PropertiesConstants;
 import org.flink.example.usercase.streaming.application.ad.RecordData;
 import org.flink.example.usercase.streaming.application.ad.RecordDataKafkaSerialization;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,9 +40,13 @@ public class KafkaConfigUtil {
         props.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, "524288000");
         props.put(ConsumerConfig.FETCH_MIN_BYTES_CONFIG, "100000");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
-        props.setProperty("security.protocol","SASL_PLAINTEXT");
-        props.setProperty("sasl.mechanism","GSSAPI");
-        props.setProperty("sasl.kerberos.service.name","kafka");
+
+        if (parameterTool.getBoolean(PropertiesConstants.KAFKA_SECURITY_KERBEROS, PropertiesConstants.DEFAULT_KAFKA_SECURITY_KERBEROS_VALUE)) {
+            props.setProperty("security.protocol","SASL_PLAINTEXT");
+            props.setProperty("sasl.mechanism","GSSAPI");
+            props.setProperty("sasl.kerberos.service.name","kafka");
+        }
+
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, parameterTool.get(PropertiesConstants.KAFKA_KEY_DESERIALIZER_KEY, PropertiesConstants.DEFAULT_KAFKA_KEY_DESERIALIZER_VALUE));
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, parameterTool.get(PropertiesConstants.KAFKA_VALUE_DESERIALIZER_KEY, PropertiesConstants.DEFAULT_KAFKA_VALUE_DESERIALIZER_VALUE));
         props.put(ConsumerConfig.GROUP_ID_CONFIG, parameterTool.get(PropertiesConstants.KAFKA_GROUP_ID_KEY, PropertiesConstants.DEFAULT_KAFKA_GROUP_ID_VALUE));
@@ -59,9 +64,15 @@ public class KafkaConfigUtil {
         props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "134217728");
         props.put(ProducerConfig.SEND_BUFFER_CONFIG, "134217728");
         props.put(ProducerConfig.BUFFER_MEMORY_CONFIG, "134217728");
-        props.setProperty("security.protocol","SASL_PLAINTEXT");
-        props.setProperty("sasl.mechanism","GSSAPI");
-        props.setProperty("sasl.kerberos.service.name","kafka");
+
+        // kerberos cluster
+        if (parameterTool.getBoolean(PropertiesConstants.KAFKA_SECURITY_KERBEROS, PropertiesConstants.DEFAULT_KAFKA_SECURITY_KERBEROS_VALUE)) {
+            props.setProperty("security.protocol","SASL_PLAINTEXT");
+            props.setProperty("sasl.mechanism","GSSAPI");
+            props.setProperty("sasl.kerberos.service.name","kafka");
+        }
+
+
         props.put(ProducerConfig.RETRIES_CONFIG, parameterTool.get(PropertiesConstants.KAFKA_RETRIES_CONFIG_KEY, PropertiesConstants.DEFAULT_KAFKA_RETRIES_CONFIG_VALUE));
         return props;
     }
@@ -96,9 +107,11 @@ public class KafkaConfigUtil {
         props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "134217728");
         props.put(ProducerConfig.SEND_BUFFER_CONFIG, "134217728");
         props.put(ProducerConfig.BUFFER_MEMORY_CONFIG, "134217728");
-        props.setProperty("security.protocol","SASL_PLAINTEXT");
-        props.setProperty("sasl.mechanism","GSSAPI");
-        props.setProperty("sasl.kerberos.service.name","kafka");
+        if (parameterTool.getBoolean(PropertiesConstants.KAFKA_SECURITY_KERBEROS, PropertiesConstants.DEFAULT_KAFKA_SECURITY_KERBEROS_VALUE)) {
+            props.setProperty("security.protocol","SASL_PLAINTEXT");
+            props.setProperty("sasl.mechanism","GSSAPI");
+            props.setProperty("sasl.kerberos.service.name","kafka");
+        }
         return props;
     }
 
