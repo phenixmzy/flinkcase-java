@@ -4,6 +4,7 @@ import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.api.java.utils.ParameterTool;
 //import org.apache.flink.runtime.state.filesystem.FsStateBackend;
+import org.apache.flink.contrib.streaming.state.EmbeddedRocksDBStateBackend;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.environment.CheckpointConfig;
@@ -70,9 +71,9 @@ public class ExecutionEnvUtil {
             env.enableCheckpointing(parameterTool.getInt(PropertiesConstants.FLINK_STREAM_CHECKPOINT_INTERVAL_KEY, PropertiesConstants.DEFAULT_FLINK_STREAM_CHECKPOINT_INTERVAL_VALUE)); // create a checkpoint every 180 seconds
             env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
             env.getCheckpointConfig().enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+            env.setStateBackend(new EmbeddedRocksDBStateBackend());
 
-            /*
-            if (parameterTool.getProperties().contains(PropertiesConstants.FLINK_STATE_BACKEND_DIR_KEY)) {
+            /*if (parameterTool.getProperties().contains(PropertiesConstants.FLINK_STATE_BACKEND_DIR_KEY)) {
                 env.setStateBackend(new FsStateBackend(parameterTool.getRequired(PropertiesConstants.FLINK_STATE_BACKEND_DIR_KEY)));
             }*/
 
