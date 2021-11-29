@@ -293,12 +293,14 @@ under the License.
 			<artifactId>flink-connector-postgres-cdc</artifactId>
 			<!-- the dependency is available only for stable releases. -->
 			<version>${flink.cdc.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.ververica</groupId>
 			<artifactId>flink-connector-oracle-cdc</artifactId>
 			<!-- the dependency is available only for stable releases. -->
 			<version>${flink.cdc.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
