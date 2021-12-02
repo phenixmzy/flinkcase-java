@@ -11,7 +11,6 @@ public class JdbcTest {
         long randomNum = System.currentTimeMillis();
         int ran3 = (int) (randomNum%(max-min)+min);
         return ran3;
-
     }
     public static void main(String[] args) {
         // TODO Auto-generated method stub
