@@ -308,6 +308,13 @@ under the License.
 			<version>${mysql-connector.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.ververica</groupId>
+			<artifactId>flink-format-changelog-json</artifactId>
+			<version>${flink.cdc.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>cn.hutool</groupId>
 			<artifactId>hutool-all</artifactId>
 			<version>${hutool.version}</version>
