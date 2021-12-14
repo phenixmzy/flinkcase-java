@@ -47,7 +47,7 @@ under the License.
 		<avro.version>1.8.1</avro.version>
 		<orc.version>1.5.2</orc.version>
 		<slf4j-log4j12.version>1.7.7</slf4j-log4j12.version>
-		<log4j.version>2.14.1</log4j.version>
+		<log4j.version>2.16.0</log4j.version>
 		<mysql-connector.version>8.0.16</mysql-connector.version>
 		<hutool.version>5.7.15</hutool.version>
 		<!--
